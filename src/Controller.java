@@ -62,6 +62,28 @@ public class Controller {
         //controller.getView().viewAllIP();
         //controller.getView().viewRegionIP(Region.SIMFEROPOL);
 
+        //checking number of active threads
+        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+        while(true) {
+            System.out.println(threadGroup.activeCount());
+            //creating empty array
+            Thread[] list = new Thread[threadGroup.activeCount()];
+            //filling it by data from thread group
+            threadGroup.enumerate(list);
+            //output info to console
+            for (Thread t: list) {
+                try {
+                    System.out.println(t.getName() + " " + t.getPriority() + " " + t.getState());
+                } catch (Exception e) {
+                }
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+
+            }
+        }
+
     }
 
     //parsing file to address list
@@ -91,7 +113,7 @@ public class Controller {
                     isThreadRunning = true;
                     int i = 0;
                     //using while loop for quick safe interrupting
-                    while(!workThread.isInterrupted() && i < list.size()) {
+                    while(workThread!= null && !workThread.isInterrupted() && i < list.size()) {
                         try {
                             view.refresh(model.ping(list.get(i)));
                         } catch (IOException e) {
@@ -107,7 +129,7 @@ public class Controller {
                     isThreadRunning = false;
 
                     //if thread was interrupted
-                    if (workThread.isInterrupted()){
+                    if (workThread == null || workThread.isInterrupted()){
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
@@ -128,7 +150,10 @@ public class Controller {
 
     public void workInterrupt() {
         if (workThread!=null && workThread.isAlive()) {
-            workThread.interrupt();
+            while (workThread!=null && !workThread.isInterrupted()) {
+                workThread.interrupt();
+                workThread = null;
+            }
         } else {
             view.nothingToInterrupt();
         }
