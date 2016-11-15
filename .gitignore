@@ -1,0 +1,11 @@
+*.class
+*.xml
+
+# Folders #
+.idea/*
+/out/*
+
+# Package Files #
+*.jar
+*.war
+*.ear
