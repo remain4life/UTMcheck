@@ -1,5 +1,13 @@
+package utmcheck.view;
+
+import utmcheck.Controller;
+import utmcheck.enums.Region;
+import utmcheck.enums.Status;
+import utmcheck.model.ModelData;
+
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class ConsoleView implements View{
@@ -38,6 +46,12 @@ public class ConsoleView implements View{
         } catch (IOException e) {
             System.out.println("Something wrong!");
         }
+    }
+
+
+    @Override
+    public void loadModelData(String stringPath) throws IOException {
+        controller.loadModelData(Paths.get(stringPath));
     }
 
     @Override

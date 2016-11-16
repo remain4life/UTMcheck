@@ -1,7 +1,14 @@
+package utmcheck;
+
+import utmcheck.enums.Region;
+import utmcheck.model.Model;
+import utmcheck.view.GuiView;
+import utmcheck.view.View;
+
 import javax.swing.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Controller {
@@ -47,9 +54,9 @@ public class Controller {
     }
 
     public void init() {
-        //create new model and view
+        //create new org.model and org.view
         Model model = new Model();
-        //View view = new ConsoleView();
+        //View org.view = new ConsoleView();
         View view = new GuiView();
 
 
@@ -64,34 +71,11 @@ public class Controller {
         controller.init();
         //controller.getView().viewAllIP();
         //controller.getView().viewRegionIP(Region.SIMFEROPOL);
-
-        //checking number of active threads
-        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
-        while(!isStopped) {
-            System.out.println(threadGroup.activeCount());
-            //creating empty array
-            Thread[] list = new Thread[threadGroup.activeCount()];
-            //filling it by data from thread group
-            threadGroup.enumerate(list);
-            //output info to console
-            for (Thread t: list) {
-                try {
-                    System.out.println(t.getName() + " " + t.getPriority() + " " + t.getState());
-                } catch (Exception ignored) {
-                }
-            }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ignored) {
-
-            }
-        }
-
     }
 
     //parsing file to address list
-    public void loadModelData() throws IOException {
-        model.loadData();
+    public void loadModelData(Path path) throws IOException {
+        model.loadData(path);
     }
 
     public void checkIP() throws IOException {
@@ -102,8 +86,8 @@ public class Controller {
     }
 
     public void checkRegionIP(Region region) throws IOException {
-       // model.checkIP(region);
-       // view.refresh(model.getModelData());
+       // org.model.checkIP(region);
+       // org.view.refresh(org.model.getModelData());
     }
 
     //list processing start

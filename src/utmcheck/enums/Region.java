@@ -1,3 +1,5 @@
+package utmcheck.enums;
+
 public enum Region {
     ALL,
     SIMFEROPOL,

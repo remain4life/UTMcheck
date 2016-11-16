@@ -1,3 +1,5 @@
+package utmcheck.enums;
+
 public enum Status {
     OK,
     UTM_WRONG_STATUS,

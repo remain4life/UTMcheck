@@ -1,3 +1,5 @@
+package utmcheck;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,18 +21,12 @@ public final class ParserUtil {
         List<URL> urls = new ArrayList<>();
         urls.add(new URL("http://127.0.0.1:8080/"));
 
+        //loading file
         BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(path)));
         String s;
         while ((s = reader.readLine()) != null) {
-            if (s.matches("^http://.*")) {
-                urls.add(new URL(s));
-            } else if (s.matches("^\\d+.*")) {
-                s = "http://" + s;
-                urls.add(new URL(s));
-            }
+            urls.add(new URL(s));
         }
-
-
 
         return urls;
     }

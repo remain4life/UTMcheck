@@ -1,3 +1,10 @@
+package utmcheck.view;
+
+import utmcheck.Controller;
+import utmcheck.enums.Region;
+import utmcheck.enums.Status;
+import utmcheck.model.ModelData;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,12 +12,16 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class GuiView extends JFrame implements View {
     private Controller controller;
     //field for view processing
-    private JTextArea logText = new JTextArea();
+    private volatile JTextArea logText = new JTextArea();
+    //field for path
+    private volatile JTextField pathField = new JTextField("C:/shops/shopList.txt", 30);
 
     public GuiView() {
         try {
@@ -64,13 +75,16 @@ public class GuiView extends JFrame implements View {
             public void actionPerformed(ActionEvent e) {
                 //here we parsing file to list we'll work with
                 try {
-                    controller.loadModelData();
+                    loadModelData(pathField.getText());
                     logText.append("Данные загружены успешно, можно обрабатывать." + System.lineSeparator());
                 } catch (IOException e1) {
                     logText.append("Ошибка при загрузке файла!" + System.lineSeparator());
                 }
             }
         });
+        //adding pathField near loading button
+        btnPanel1.add(pathField);
+
         btnPanel1.add(button11);
         allBtnPanel.add(btnPanel1, BorderLayout.NORTH);
 
@@ -117,7 +131,7 @@ public class GuiView extends JFrame implements View {
 
         allBtnPanel.add(btnPanel2, BorderLayout.SOUTH);
 
-        //add processing view field
+        //add processing org.view field
         JPanel textPanel = new JPanel();
         textPanel.setBorder(BorderFactory.createTitledBorder("Лог обработки: "));
         logText.setLineWrap(true);
@@ -163,6 +177,12 @@ public class GuiView extends JFrame implements View {
         } catch (IOException e) {
             System.out.println("Something wrong!");
         }
+    }
+
+    //loading file with urls
+    @Override
+    public void loadModelData(String stringPath) throws IOException {
+        controller.loadModelData(Paths.get(stringPath));
     }
 
     //when all list processing done

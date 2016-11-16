@@ -1,5 +1,11 @@
+package utmcheck.model;
+
+import utmcheck.ParserUtil;
+import utmcheck.enums.Status;
+
 import java.io.IOException;
 import java.net.*;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +17,8 @@ public class Model {
         return modelData;
     }
 
-    public void loadData() throws IOException {
-        modelData.loadSocketList(Paths.get("c:/shops/shopList.txt"));
+    public void loadData(Path path) throws IOException {
+        modelData.loadSocketList(path);
     }
 
     public Map.Entry<URL, Status> checkIP(URL urlSocket) throws IOException {
