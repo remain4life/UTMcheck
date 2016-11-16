@@ -106,6 +106,7 @@ public class GuiView extends JFrame implements View {
         button24.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Controller.isStopped = true;
                 dispose();
             }
         });

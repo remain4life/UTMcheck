@@ -8,6 +8,9 @@ public class Controller {
     private View view;
     private Model model;
 
+    //test variable for loop stop
+    public static volatile boolean isStopped = false;
+
     //variable for one thread control
     private volatile boolean isThreadRunning = false;
     //flag for work processing control
@@ -64,7 +67,7 @@ public class Controller {
 
         //checking number of active threads
         ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
-        while(true) {
+        while(!isStopped) {
             System.out.println(threadGroup.activeCount());
             //creating empty array
             Thread[] list = new Thread[threadGroup.activeCount()];
@@ -74,12 +77,12 @@ public class Controller {
             for (Thread t: list) {
                 try {
                     System.out.println(t.getName() + " " + t.getPriority() + " " + t.getState());
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             try {
                 Thread.sleep(10);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
 
             }
         }
@@ -153,6 +156,8 @@ public class Controller {
             while (workThread!=null && !workThread.isInterrupted()) {
                 workThread.interrupt();
                 workThread = null;
+                //garbage collector for waste thread
+                System.gc();
             }
         } else {
             view.nothingToInterrupt();
