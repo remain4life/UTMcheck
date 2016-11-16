@@ -2,6 +2,7 @@ package utmcheck;
 
 import utmcheck.enums.Region;
 import utmcheck.model.Model;
+import utmcheck.model.Shop;
 import utmcheck.view.GuiView;
 import utmcheck.view.View;
 
@@ -82,7 +83,7 @@ public class Controller {
         if (model.getModelData().isEmpty()) {
             view.emptyMessage();
         }
-        startWorkThread(model.getModelData().getSocketList());
+        startWorkThread(model.getModelData().getShopList());
     }
 
     public void checkRegionIP(Region region) throws IOException {
@@ -91,7 +92,7 @@ public class Controller {
     }
 
     //list processing start
-    public void startWorkThread(final List<URL> list) {
+    public void startWorkThread(final List<Shop> list) {
         if (!isThreadRunning){
             workThread = new Thread(new Runnable() {
                 @Override

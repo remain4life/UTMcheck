@@ -4,7 +4,6 @@ import utmcheck.ParserUtil;
 import utmcheck.enums.Status;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,40 +11,40 @@ import java.util.List;
 import java.util.Map;
 
 public class ModelData {
-    private List<URL> socketList = new ArrayList<>();
-    private List<String> notConnectedIPList = new ArrayList<>();
-    private Map<URL, Status> resultMap = new HashMap<>();
+    private List<Shop> shopList = new ArrayList<>();
+    private List<Shop> notConnectedShops = new ArrayList<>();
+    private Map<Shop, Status> resultMap = new HashMap<>();
 
     public void loadSocketList(Path path) throws IOException {
-        socketList = ParserUtil.parseFile(path);
+        shopList = ParserUtil.parseFile(path);
     }
 
 
-    public List<URL> getSocketList() {
-        return socketList;
+    public List<Shop> getShopList() {
+        return shopList;
     }
 
-    public void setSocketList(List<URL> socketList) {
-        this.socketList = socketList;
+    public void setShopList(List<Shop> shopList) {
+        this.shopList = shopList;
     }
 
-    public Map<URL, Status> getResultMap() {
+    public Map<Shop, Status> getResultMap() {
         return resultMap;
     }
 
-    public void setResultMap(Map<URL, Status> resultMap) {
+    public void setResultMap(Map<Shop, Status> resultMap) {
         this.resultMap = resultMap;
     }
 
-    public List<String> getNotConnectedIPList() {
-        return notConnectedIPList;
+    public List<Shop> getNotConnectedShops() {
+        return notConnectedShops;
     }
 
-    public void setNotConnectedIPList(List<String> notConnectedIPList) {
-        this.notConnectedIPList = notConnectedIPList;
+    public void setNotConnectedShops(List<Shop> notConnectedShops) {
+        this.notConnectedShops = notConnectedShops;
     }
 
     public boolean isEmpty() {
-        return socketList.isEmpty();
+        return shopList.isEmpty();
     }
 }

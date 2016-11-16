@@ -9,6 +9,9 @@ public enum Region {
     DJANKOY,
     FEODOSIYA,
     YEVPATORIA,
+    ARMYANSK,
     KRASNOPEREKOPSK,
-    KERCH
+    KRASNOGVARDEYSK,
+    KERCH,
+    OTHER
 }

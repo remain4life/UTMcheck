@@ -4,6 +4,7 @@ import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.model.ModelData;
+import utmcheck.model.Shop;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,13 +16,13 @@ public class ConsoleView implements View{
 
     @Override
     public void refreshAll(ModelData modelData) {
-        for (Map.Entry<URL, Status> result: modelData.getResultMap().entrySet()) {
+        for (Map.Entry<Shop, Status> result: modelData.getResultMap().entrySet()) {
             System.out.println(result.getKey() + " - " + result.getValue());
         }
     }
 
     @Override
-    public void refresh(Map.Entry<URL, Status> entry) {
+    public void refresh(Map.Entry<Shop, Status> entry) {
         System.out.println(entry.getKey() + " - " + entry.getValue());
     }
 

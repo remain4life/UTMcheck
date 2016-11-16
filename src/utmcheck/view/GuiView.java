@@ -4,6 +4,7 @@ import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.model.ModelData;
+import utmcheck.model.Shop;
 
 import javax.swing.*;
 import java.awt.*;
@@ -146,13 +147,13 @@ public class GuiView extends JFrame implements View {
 
     @Override
     public void refreshAll(ModelData modelData) {
-        for (Map.Entry<URL, Status> result: modelData.getResultMap().entrySet()) {
+        for (Map.Entry<Shop, Status> result: modelData.getResultMap().entrySet()) {
             logText.append(result.getKey() + " - " + result.getValue());
         }
     }
 
     @Override
-    public void refresh(Map.Entry<URL, Status> entry) {
+    public void refresh(Map.Entry<Shop, Status> entry) {
         logText.append(" "+ entry.getKey() + " - " + entry.getValue() + System.lineSeparator());
     }
 
