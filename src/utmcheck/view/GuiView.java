@@ -1,5 +1,6 @@
 package utmcheck.view;
 
+import utmcheck.ColorPane;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
@@ -21,9 +22,10 @@ import java.util.Map;
 public class GuiView extends JFrame implements View {
     private Controller controller;
     //field for view processing
-    private volatile JTextArea logText = new JTextArea();
+    //private volatile JTextArea logText = new JTextArea(); //old field with plain text
+    private volatile ColorPane logText = new ColorPane();
     //field for path
-    private volatile JTextField pathField = new JTextField("C:/shops/shopList.txt", 30);
+    private volatile JTextField pathField = new JTextField("C:/shops/shopList2.txt", 30);
 
     public GuiView() {
         try {
@@ -78,11 +80,12 @@ public class GuiView extends JFrame implements View {
                 //here we parsing file to list we'll work with
                 try {
                     loadModelData(pathField.getText());
-                    logText.append("Данные загружены успешно, можно обрабатывать." + System.lineSeparator());
+                    //DarkGreen
+                    logText.append(new Color(0, 100, 0), "Данные загружены успешно, можно обрабатывать." + System.lineSeparator());
                 } catch (NotCorrectFileException e1) {
-                    logText.append("Некорректный синтаксис в файле!" + System.lineSeparator());
+                    logText.append(Color.RED, "Некорректный синтаксис в файле!" + System.lineSeparator());
                 } catch (Exception e2) {
-                    logText.append("Ошибка при загрузке файла!" + System.lineSeparator());
+                    logText.append(Color.RED, "Ошибка при загрузке файла!" + System.lineSeparator());
                 }
             }
         });
@@ -157,8 +160,8 @@ public class GuiView extends JFrame implements View {
         //add processing org.view field
         JPanel textPanel = new JPanel();
         textPanel.setBorder(BorderFactory.createTitledBorder("Лог обработки: "));
-        logText.setLineWrap(true);
-        logText.setWrapStyleWord(true);
+        //--logText.setLineWrap(true);
+        //--logText.setWrapStyleWord(true);
         JScrollPane logScrollPane = new JScrollPane(logText);
         logScrollPane.setPreferredSize(new Dimension(580, 400));
         textPanel.add(logScrollPane);
@@ -219,13 +222,99 @@ public class GuiView extends JFrame implements View {
     @Override
     public void refreshAll(ModelData modelData) {
         for (Map.Entry<Shop, Status> result: modelData.getResultMap().entrySet()) {
-            logText.append(result.getKey() + " - " + result.getValue());
+            refresh(result);
         }
     }
 
     @Override
     public void refresh(Map.Entry<Shop, Status> entry) {
-        logText.append(" "+ entry.getKey() + " - " + entry.getValue() + System.lineSeparator());
+        String regionOutput;
+        String status;
+        Color colorStatus;
+
+        Shop shop = entry.getKey();
+        switch (shop.getRegion()) {
+            case SIMFEROPOL:
+                regionOutput = ", Симферополь, ";
+                break;
+            case BAKHCHISARAI:
+                regionOutput = ", Бахчисарай, ";
+                break;
+            case BELOGORSK:
+                regionOutput = ", Белогорск, ";
+                break;
+            case SEVASTOPOL:
+                regionOutput = ", Севастополь, ";
+                break;
+            case YALTA:
+                regionOutput = ", Ялта, ";
+                break;
+            case ALUSHTA:
+                regionOutput = ", Алушта, ";
+                break;
+            case ARMYANSK:
+                regionOutput = ", Армянск, ";
+                break;
+            case KRASNOPEREKOPSK:
+                regionOutput = ", Красноперекопск, ";
+                break;
+            case KRASNOGVARDEYSK:
+                regionOutput = ", Красногвардейск, ";
+                break;
+            case KERCH:
+                regionOutput = ", Керчь, ";
+                break;
+            case FEODOSIYA:
+                regionOutput = ", Феодосия, ";
+                break;
+            case SUDAK:
+                regionOutput = ", Судак, ";
+                break;
+            case YEVPATORIA:
+                regionOutput = ", Евпатория, ";
+                break;
+            case SAKI:
+                regionOutput = ", Саки, ";
+                break;
+            case JANKOI:
+                regionOutput = ", Джанкой, ";
+                break;
+            default:
+                regionOutput = ", Неизвестный регион, ";
+                break;
+        }
+
+
+        switch (entry.getValue()) {
+            case OK:
+                status = "Всё ОК!";
+                colorStatus = new Color(46, 139, 87);
+                break;
+            case NO_HOST_CONNECT:
+                status = "Нет связи с компьютером!";
+                colorStatus = Color.RED;
+                break;
+            case NO_UTM_CONNECT:
+                status = "Компьютер доступен, нет связи с УТМ!";
+                colorStatus = Color.ORANGE;
+                break;
+            case UTM_WRONG_STATUS:
+                status = "Компьютер доступен, проблема со службами УТМ!";
+                colorStatus = Color.ORANGE;
+                break;
+            default:
+                status = "Не обработан!";
+                colorStatus = Color.MAGENTA;
+                break;
+        }
+
+        //logText.append(" "+ shopOutput + " ==> " + status + System.lineSeparator());
+        logText.append(Color.BLACK, " " + shop.getName(), true);
+        logText.append(regionOutput);
+        logText.append(Color.BLUE, shop.getIP().toString());
+        logText.append(" ==> ");
+        logText.append(colorStatus, status + System.lineSeparator(), false);
+
     }
 
     @Override
@@ -238,7 +327,7 @@ public class GuiView extends JFrame implements View {
         try {
             controller.checkRegionIP();
         } catch (IOException e) {
-            logText.append("Ошибка обработки!");
+            logText.append(Color.RED, "Ошибка обработки!");
         }
     }
 
@@ -251,7 +340,7 @@ public class GuiView extends JFrame implements View {
     //when all list processing done
     @Override
     public void doneMessage() {
-        logText.append("Все точки обработаны и кэшированы!" + System.lineSeparator());
+        logText.append(new Color(0, 100, 0), "Все точки обработаны и кэшированы!" + System.lineSeparator());
     }
 
     @Override
@@ -265,21 +354,21 @@ public class GuiView extends JFrame implements View {
 
     @Override
     public void nothingToInterrupt(){
-        logText.append("Процесс не запущен, нечего прерывать." + System.lineSeparator());
+        logText.append(Color.RED, "Процесс не запущен, нечего прерывать." + System.lineSeparator());
     }
 
     @Override
     public void interruptDone() {
-        logText.append("Обработка прервана, данные кэшированы." + System.lineSeparator());
+        logText.append(Color.RED, "Обработка прервана, данные кэшированы." + System.lineSeparator());
     }
 
     @Override
     public void emptyBaseMessage() {
-        logText.append("База адресов пуста, загрузите данные!" + System.lineSeparator());
+        logText.append(Color.RED, "База адресов пуста, загрузите данные!" + System.lineSeparator());
     }
 
     @Override
     public void emptyRegionMessage() {
-        logText.append("В базе нет магазинов по данному региону!" + System.lineSeparator());
+        logText.append(Color.RED, "В базе нет магазинов по данному региону!" + System.lineSeparator());
     }
 }
