@@ -17,5 +17,6 @@ public enum Region {
     KRASNOGVARDEYSK,
     KERCH,
     SUDAK,
+    NIZHNEGORSK,
     OTHER
 }

@@ -49,7 +49,7 @@ public final class ParserUtil {
                 URL IP = stringToURL(parts[3]);
 
                 shops.add(new Shop(name, region, IP));
-            } else {
+            } else if (parts.length>0) {
                 throw new NotCorrectFileException();
             }
         }
@@ -75,6 +75,7 @@ public final class ParserUtil {
                 region = Region.SEVASTOPOL;
                 break;
             case "ЯЛТА":
+            case "ЯЛТИ":
                 region = Region.YALTA;
                 break;
             case "АЛУШ":
@@ -100,13 +101,18 @@ public final class ParserUtil {
                 region = Region.SUDAK;
                 break;
             case "ЕВПА":
+            case "ЧЕРН":
                 region = Region.YEVPATORIA;
                 break;
             case "САКИ":
+            case "САКС":
                 region = Region.SAKI;
                 break;
             case "ДЖАН":
                 region = Region.JANKOI;
+                break;
+            case "НИЖН":
+                region = Region.NIZHNEGORSK;
                 break;
             default:
                 region = Region.OTHER;

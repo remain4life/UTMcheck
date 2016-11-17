@@ -174,7 +174,7 @@ public class GuiView extends JFrame implements View {
         return new String[]{" Все ",
                 " Симферополь / Белогорск / Бахчисарай ",
                 " Севастополь ",
-                " Джанкой / Красногвардейск ",
+                " Джанкой / Красногвардейск / Нижнегорск ",
                 " Феодосия / Судак ",
                 " Керчь ",
                 " Евпатория / Саки ",
@@ -194,7 +194,7 @@ public class GuiView extends JFrame implements View {
             case " Севастополь ":
                 region = Region.SEVASTOPOL;
                 break;
-            case " Джанкой / Красногвардейск ":
+            case " Джанкой / Красногвардейск / Нижнегорск ":
                 region = Region.JANKOI;
                 break;
             case " Феодосия / Судак ":
@@ -260,6 +260,9 @@ public class GuiView extends JFrame implements View {
                 break;
             case KRASNOGVARDEYSK:
                 regionOutput = ", Красногвардейск, ";
+                break;
+            case NIZHNEGORSK:
+                regionOutput = ", Нижнегорск, ";
                 break;
             case KERCH:
                 regionOutput = ", Керчь, ";

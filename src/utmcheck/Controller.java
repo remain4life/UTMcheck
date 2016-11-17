@@ -109,7 +109,8 @@ public class Controller {
                             break;
                         case JANKOI:
                             if (shop.getRegion() == JANKOI ||
-                                    shop.getRegion() == KRASNOGVARDEYSK) {
+                                    shop.getRegion() == KRASNOGVARDEYSK ||
+                                    shop.getRegion() == NIZHNEGORSK) {
                                 shops.add(shop);
                             }
                             break;
