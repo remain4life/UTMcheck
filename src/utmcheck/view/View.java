@@ -16,13 +16,13 @@ public interface View {
     void refreshAll(ModelData modelData);
     void setController(Controller controller);
 
-    void loadModelData(String stringPath) throws IOException;
-    void viewAllIP();
-    void viewRegionIP(Region region);
+    void loadModelData(String stringPath) throws Exception;
+    void viewIPs();
     void workInterrupt();
 
     void doneMessage();
-    void emptyMessage();
+    void emptyBaseMessage();
+    void emptyRegionMessage();
     void nothingToInterrupt();
     void interruptDone();
 }

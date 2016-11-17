@@ -41,10 +41,6 @@ public class Shop {
 
     @Override
     public String toString() {
-        return "Shop{" +
-                "name='" + name + '\'' +
-                ", region=" + region +
-                ", IP=" + IP +
-                '}';
+        return name + ", " + region + ", " + IP;
     }
 }

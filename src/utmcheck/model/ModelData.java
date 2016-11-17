@@ -15,7 +15,7 @@ public class ModelData {
     private List<Shop> notConnectedShops = new ArrayList<>();
     private Map<Shop, Status> resultMap = new HashMap<>();
 
-    public void loadSocketList(Path path) throws IOException {
+    public void loadSocketList(Path path) throws Exception {
         shopList = ParserUtil.parseFile(path);
     }
 

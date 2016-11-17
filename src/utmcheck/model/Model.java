@@ -16,7 +16,7 @@ public class Model {
         return modelData;
     }
 
-    public void loadData(Path path) throws IOException {
+    public void loadData(Path path) throws Exception {
         modelData.loadSocketList(path);
     }
 

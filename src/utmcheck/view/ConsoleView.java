@@ -32,18 +32,9 @@ public class ConsoleView implements View{
     }
 
     @Override
-    public void viewAllIP() {
+    public void viewIPs() {
         try {
-            controller.checkIP();
-        } catch (IOException e) {
-            System.out.println("Something wrong!");
-        }
-    }
-
-    @Override
-    public void viewRegionIP(Region region) {
-        try {
-            controller.checkRegionIP(region);
+            controller.checkRegionIP();
         } catch (IOException e) {
             System.out.println("Something wrong!");
         }
@@ -51,7 +42,7 @@ public class ConsoleView implements View{
 
 
     @Override
-    public void loadModelData(String stringPath) throws IOException {
+    public void loadModelData(String stringPath) throws Exception {
         controller.loadModelData(Paths.get(stringPath));
     }
 
@@ -76,7 +67,12 @@ public class ConsoleView implements View{
     }
 
     @Override
-    public void emptyMessage() {
-        System.out.println("База адресов пуста, загрузите данные! \n");
+    public void emptyBaseMessage() {
+        System.out.println("База адресов пуста, загрузите данные!\n");
+    }
+
+    @Override
+    public void emptyRegionMessage() {
+        System.out.println("В базе нет магазинов по данному региону!\n");
     }
 }

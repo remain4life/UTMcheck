@@ -10,44 +10,35 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+
+import static utmcheck.enums.Region.*;
 
 public class Controller {
     private View view;
     private Model model;
 
-    //test variable for loop stop
-    public static volatile boolean isStopped = false;
+    //variable for region processing
+    private volatile Region region = ALL; //default value
 
     //variable for one thread control
     private volatile boolean isThreadRunning = false;
     //flag for work processing control
     private volatile boolean workDone = false;
-
-    public boolean isThreadRunning() {
-        return isThreadRunning;
-    }
-
-    public void setThreadRunning(boolean threadRunning) {
-        isThreadRunning = threadRunning;
-    }
-
-    public boolean isWorkDone() {
-        return workDone;
-    }
-
-    public void setWorkDone(boolean workDone) {
-        this.workDone = workDone;
-    }
-
+    //our thread for checking shops
     private volatile Thread workThread = null;
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
 
     public void setView(View view) {
         this.view = view;
-    }
-
-    public View getView() {
-        return view;
     }
 
     public void setModel(Model model) {
@@ -75,20 +66,80 @@ public class Controller {
     }
 
     //parsing file to address list
-    public void loadModelData(Path path) throws IOException {
+    public void loadModelData(Path path) throws Exception {
         model.loadData(path);
     }
 
-    public void checkIP() throws IOException {
+    public void checkRegionIP() throws IOException {
         if (model.getModelData().isEmpty()) {
-            view.emptyMessage();
+            view.emptyBaseMessage();
+            return;
         }
-        startWorkThread(model.getModelData().getShopList());
+
+        List<Shop> selectedShops = getNeededRegionShops();
+
+        if (selectedShops.isEmpty()) {
+            view.emptyRegionMessage();
+            return;
+        }
+        startWorkThread(selectedShops);
     }
 
-    public void checkRegionIP(Region region) throws IOException {
-       // org.model.checkIP(region);
-       // org.view.refresh(org.model.getModelData());
+    //getting shop list based on main region town
+    private List<Shop> getNeededRegionShops() {
+        List<Shop> allShops = model.getModelData().getShopList();
+        List<Shop> shops = new ArrayList<>();
+        switch (region) {
+            case ALL:
+                return allShops;
+            default:
+                for (Shop shop: allShops) {
+                    switch (region) {
+                        case SIMFEROPOL:
+                            if (shop.getRegion() == SIMFEROPOL ||
+                                    shop.getRegion() == BELOGORSK ||
+                                    shop.getRegion() == BAKHCHISARAI) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case SEVASTOPOL:
+                            if (shop.getRegion() == region) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case JANKOI:
+                            if (shop.getRegion() == JANKOI ||
+                                    shop.getRegion() == KRASNOGVARDEYSK) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case ALUSHTA:
+                            if (shop.getRegion() == ALUSHTA ||
+                                    shop.getRegion() == YALTA) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case KRASNOPEREKOPSK:
+                            if (shop.getRegion() == ARMYANSK ||
+                                    shop.getRegion() == KRASNOPEREKOPSK) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case FEODOSIYA:
+                            if (shop.getRegion() == SUDAK ||
+                                    shop.getRegion() == FEODOSIYA) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case KERCH:
+                            if (shop.getRegion() == region) {
+                                shops.add(shop);
+                            }
+                            break;
+                    }
+                }
+                return shops;
+        }
     }
 
     //list processing start

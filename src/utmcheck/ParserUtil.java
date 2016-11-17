@@ -1,6 +1,7 @@
 package utmcheck;
 
 import utmcheck.enums.Region;
+import utmcheck.exceptions.NotCorrectFileException;
 import utmcheck.model.Shop;
 
 import java.io.BufferedReader;
@@ -17,14 +18,15 @@ public final class ParserUtil {
     private ParserUtil() {
     }
 
-    public static List<Shop> parseFile(Path path) throws IOException {
+    public static List<Shop> parseFile(Path path) throws Exception {
 
         //loading file
         /* each line of file should match this pattern
         "Shop/Point name* Region** IP***"
         * one or more space separated words
         ** one or more space separated words, started with region name
-        *** IP-address or domain name, may start with http:// or not, choul be unic
+        *** IP-address or domain name, may start with http:// or not
+        encoding - UTF-8
 
         examples:
 
@@ -40,18 +42,16 @@ public final class ParserUtil {
 
             String[] parts = s.split(regexp);
 
-            String name = null;
-            Region region = null;
-            URL IP = null;
-            try {
-                name = parts[1];
-                region = getRegion(parts[2]);
-                IP = stringToURL(parts[3]);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            //adding only good strings
+            if (parts.length==4 && parts[0].isEmpty()) {
+                String name = parts[1];
+                Region region = getRegion(parts[2]);
+                URL IP = stringToURL(parts[3]);
 
-            shops.add(new Shop(name, region, IP));
+                shops.add(new Shop(name, region, IP));
+            } else {
+                throw new NotCorrectFileException();
+            }
         }
 
         return shops;
@@ -63,9 +63,13 @@ public final class ParserUtil {
         String begin = place.substring(0, 4).toUpperCase();
         switch (begin) {
             case "СИМФ":
-            case "БАХЧ":
-            case "БЕЛО":
                 region = Region.SIMFEROPOL;
+                break;
+            case "БАХЧ":
+                region = Region.BAKHCHISARAI;
+                break;
+            case "БЕЛО":
+                region = Region.BELOGORSK;
                 break;
             case "СЕВА":
                 region = Region.SEVASTOPOL;
@@ -92,12 +96,17 @@ public final class ParserUtil {
             case "ФЕОД":
                 region = Region.FEODOSIYA;
                 break;
+            case "СУДА":
+                region = Region.SUDAK;
+                break;
             case "ЕВПА":
-            case "САКИ":
                 region = Region.YEVPATORIA;
                 break;
+            case "САКИ":
+                region = Region.SAKI;
+                break;
             case "ДЖАН":
-                region = Region.DJANKOY;
+                region = Region.JANKOI;
                 break;
             default:
                 region = Region.OTHER;
@@ -110,7 +119,7 @@ public final class ParserUtil {
         return socket.toString().replaceAll("^http://","").replaceAll(":.*$", "");
     }
 
-    public static URL stringToURL(String address) throws MalformedURLException {
+    public static URL stringToURL(String address) throws Exception {
         //adding protocol
         if (!address.matches("^http://.*")) {
             address = "http://" + address;
