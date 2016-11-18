@@ -83,7 +83,7 @@ public class GuiView extends JFrame implements View {
                     //DarkGreen
                     logText.append(new Color(0, 100, 0), "Данные загружены успешно, можно обрабатывать." + System.lineSeparator());
                 } catch (NotCorrectFileException e1) {
-                    logText.append(Color.RED, "Некорректный синтаксис в файле!" + System.lineSeparator());
+                    logText.append(Color.RED, "Некорректный синтаксис в файле! Строка: " + e1.getMessage() + System.lineSeparator());
                 } catch (Exception e2) {
                     logText.append(Color.RED, "Ошибка при загрузке файла!" + System.lineSeparator());
                 }
@@ -108,15 +108,18 @@ public class GuiView extends JFrame implements View {
                 controller.setRegion(getMainRegionsFromString(selectedItem));
             }
         });
-
         btnPanel2.add(regionBox);
 
         allBtnPanel.add(btnPanel2, BorderLayout.CENTER);
 
 
 
-        //creating buttons panel-2
+        //creating buttons panel-3
         JPanel btnPanel3 = new JPanel();
+        btnPanel3.setLayout(new BorderLayout());
+
+        JPanel subBtnPanel1 = new JPanel();
+        JPanel subBtnPanel2 = new JPanel();
         //processing button
         JButton button31 = new JButton("Запустить проверку магазинов");
         button31.addActionListener(new ActionListener() {
@@ -134,34 +137,44 @@ public class GuiView extends JFrame implements View {
                 workInterrupt();
             }
         });
-        //clear button
-        JButton button33 = new JButton("Очистить вывод");
+        //resultMap with cached data show button
+        JButton button33 = new JButton("Вывести обработанные магазины");
         button33.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //here controller starts new thread for real-time logging
+                controller.viewShops();
+            }
+        });
+        //clear button
+        JButton button34 = new JButton("Очистить вывод");
+        button34.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearLogView();
             }
         });
         //exit button
-        JButton button34 = new JButton("Выход");
-        button34.addActionListener(new ActionListener() {
+        JButton button35 = new JButton("Выход");
+        button35.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
-        btnPanel3.add(button31);
-        btnPanel3.add(button32);
-        btnPanel3.add(button33);
-        btnPanel3.add(button34);
+        subBtnPanel1.add(button31);
+        subBtnPanel1.add(button32);
+        subBtnPanel1.add(button33);
+        subBtnPanel2.add(button34);
+        subBtnPanel2.add(button35);
+        btnPanel3.add(subBtnPanel1, BorderLayout.NORTH);
+        btnPanel3.add(subBtnPanel2, BorderLayout.SOUTH);
 
         allBtnPanel.add(btnPanel3, BorderLayout.SOUTH);
 
-        //add processing org.view field
+        //add processing view field
         JPanel textPanel = new JPanel();
         textPanel.setBorder(BorderFactory.createTitledBorder("Лог обработки: "));
-        //--logText.setLineWrap(true);
-        //--logText.setWrapStyleWord(true);
         JScrollPane logScrollPane = new JScrollPane(logText);
         logScrollPane.setPreferredSize(new Dimension(580, 400));
         textPanel.add(logScrollPane);
@@ -220,17 +233,24 @@ public class GuiView extends JFrame implements View {
     }
 
     @Override
-    public void refreshAll(ModelData modelData) {
-        for (Map.Entry<Shop, Status> result: modelData.getResultMap().entrySet()) {
+    public void refreshAll(Map<Shop, Status> resultMap) {
+        for (Map.Entry<Shop, Status> result: resultMap.entrySet()) {
             refresh(result);
         }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                cashedShopsShown();
+            }
+        });
+
     }
 
     @Override
     public void refresh(Map.Entry<Shop, Status> entry) {
-        String regionOutput;
-        String status;
-        Color colorStatus;
+        final String regionOutput;
+        final String status;
+        final Color colorStatus;
 
         Shop shop = entry.getKey();
         switch (shop.getRegion()) {
@@ -311,12 +331,19 @@ public class GuiView extends JFrame implements View {
                 break;
         }
 
-        //logText.append(" "+ shopOutput + " ==> " + status + System.lineSeparator());
-        logText.append(Color.BLACK, " " + shop.getName(), true);
-        logText.append(regionOutput);
-        logText.append(Color.BLUE, shop.getIP().toString());
-        logText.append(" ==> ");
-        logText.append(colorStatus, status + System.lineSeparator(), false);
+        final String name = shop.getName();
+        final String IP = shop.getIP().toString();
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                logText.append(Color.BLACK, " " + name, true);
+                logText.append(regionOutput);
+                logText.append(Color.BLUE, IP);
+                logText.append(" ==> ");
+                logText.append(colorStatus, status + System.lineSeparator(), false);
+            }
+        });
 
     }
 
@@ -373,5 +400,10 @@ public class GuiView extends JFrame implements View {
     @Override
     public void emptyRegionMessage() {
         logText.append(Color.RED, "В базе нет магазинов по данному региону!" + System.lineSeparator());
+    }
+
+    @Override
+    public void cashedShopsShown() {
+        logText.append(new Color(0, 100, 0), "Обработанные магазины по выбранным регионам выведены!" + System.lineSeparator());
     }
 }

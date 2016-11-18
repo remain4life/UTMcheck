@@ -1,6 +1,7 @@
 package utmcheck;
 
 import utmcheck.enums.Region;
+import utmcheck.enums.Status;
 import utmcheck.model.Model;
 import utmcheck.model.Shop;
 import utmcheck.view.GuiView;
@@ -10,8 +11,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static utmcheck.enums.Region.*;
 
@@ -46,9 +46,9 @@ public class Controller {
     }
 
     public void init() {
-        //create new org.model and org.view
+        //create new model and org.view
         Model model = new Model();
-        //View org.view = new ConsoleView();
+        //View view = new ConsoleView();
         View view = new GuiView();
 
 
@@ -83,6 +83,7 @@ public class Controller {
             return;
         }
         startWorkThread(selectedShops);
+        System.gc();
     }
 
     //getting shop list based on main region town
@@ -180,7 +181,12 @@ public class Controller {
 
                     //final message when work done
                     if (workDone) {
-                        view.doneMessage();
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.doneMessage();
+                            }
+                        });
                     }
                 }
             });
@@ -199,5 +205,22 @@ public class Controller {
         } else {
             view.nothingToInterrupt();
         }
+    }
+
+    public void viewShops() {
+        //getting shops according region
+        List<Shop> neededShops = getNeededRegionShops();
+        //new map for output
+        Map<Shop, Status> regionMap = new TreeMap<>();
+        for (Map.Entry<Shop, Status> entry: model.getModelData().getResultMap().entrySet()) {
+            if (neededShops.contains(entry.getKey())) {
+                regionMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        if (regionMap.isEmpty()) {
+            view.emptyRegionMessage();
+            return;
+        }
+        view.refreshAll(regionMap);
     }
 }

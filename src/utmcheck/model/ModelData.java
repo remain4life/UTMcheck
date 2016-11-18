@@ -5,15 +5,12 @@ import utmcheck.enums.Status;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModelData {
     private List<Shop> shopList = new ArrayList<>();
     private List<Shop> notConnectedShops = new ArrayList<>();
-    private Map<Shop, Status> resultMap = new HashMap<>();
+    private Map<Shop, Status> resultMap = new TreeMap<>();
 
     public void loadSocketList(Path path) throws Exception {
         shopList = ParserUtil.parseFile(path);

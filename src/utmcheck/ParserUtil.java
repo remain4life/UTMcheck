@@ -50,7 +50,7 @@ public final class ParserUtil {
 
                 shops.add(new Shop(name, region, IP));
             } else if (parts.length>0) {
-                throw new NotCorrectFileException();
+                throw new NotCorrectFileException(s);
             }
         }
 
@@ -84,6 +84,10 @@ public final class ParserUtil {
             case "АРМЯ":
                 region = Region.ARMYANSK;
                 break;
+            case "ПЕРВ":
+            case "РАЗД":
+                region = Region.KRASNOPEREKOPSK;
+                break;
             case "КРАС":
                 if (place.toUpperCase().startsWith("КРАСНОПЕР")){
                     region = Region.KRASNOPEREKOPSK;
@@ -91,6 +95,7 @@ public final class ParserUtil {
                     region = Region.KRASNOGVARDEYSK;
                 }
                 break;
+            case "ЛЕНИ":
             case "КЕРЧ":
                 region = Region.KERCH;
                 break;

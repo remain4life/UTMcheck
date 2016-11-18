@@ -13,7 +13,7 @@ import java.util.Map;
 
 public interface View {
     void refresh(Map.Entry<Shop, Status> entry);
-    void refreshAll(ModelData modelData);
+    void refreshAll(Map<Shop, Status> resultMap);
     void setController(Controller controller);
 
     void loadModelData(String stringPath) throws Exception;
@@ -25,4 +25,6 @@ public interface View {
     void emptyRegionMessage();
     void nothingToInterrupt();
     void interruptDone();
+
+    void cashedShopsShown();
 }

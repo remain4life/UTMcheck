@@ -4,7 +4,7 @@ import utmcheck.enums.Region;
 
 import java.net.URL;
 
-public class Shop {
+public class Shop implements Comparable{
     private String name;
     private Region region;
     private URL IP;
@@ -42,5 +42,12 @@ public class Shop {
     @Override
     public String toString() {
         return name + ", " + region + ", " + IP;
+    }
+
+    //for sorting shops
+
+    @Override
+    public int compareTo(Object o) {
+        return this.name.compareToIgnoreCase(((Shop)o).name);
     }
 }

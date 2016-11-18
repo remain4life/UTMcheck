@@ -15,9 +15,9 @@ public class ConsoleView implements View{
     private Controller controller;
 
     @Override
-    public void refreshAll(ModelData modelData) {
-        for (Map.Entry<Shop, Status> result: modelData.getResultMap().entrySet()) {
-            System.out.println(result.getKey() + " - " + result.getValue());
+    public void refreshAll(Map<Shop, Status> resultMap) {
+        for (Map.Entry<Shop, Status> entry: resultMap.entrySet()) {
+            refresh(entry);
         }
     }
 
@@ -74,5 +74,10 @@ public class ConsoleView implements View{
     @Override
     public void emptyRegionMessage() {
         System.out.println("В базе нет магазинов по данному региону!\n");
+    }
+
+    @Override
+    public void cashedShopsShown() {
+        System.out.println("Обработанные магазины по данному региону выведены!\n");
     }
 }
