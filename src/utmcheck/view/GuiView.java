@@ -38,37 +38,44 @@ public class GuiView extends JFrame implements View {
 
     private void initGui() {
         //configure our window
-        setVisible(true);
-        setMinimumSize(new Dimension(600,650));
-        setTitle("Проверка доступа к УТМ на магазинах");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        initWindow();
 
         //creating parent panel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         setContentPane(panel);
 
-        //output your IP
-        String IP;
-        String host = "";
-        try {
-            IP = InetAddress.getLocalHost().getHostAddress();
-            host = InetAddress.getLocalHost().getHostName();
-        }
-        catch (Exception e) {
-            IP = "Не хватает получения IP-адреса";
-        }
-        JPanel IPPanel = new JPanel();
-        IPPanel.setBorder(BorderFactory.createTitledBorder("Ваш IP-адрес и имя компьютера: "));
-        IPPanel.add(new JLabel("<html><b>" + IP + ", </b>"));
-        IPPanel.add(new JLabel("<html><b>" + host + "</b>"));
-        panel.add(IPPanel, BorderLayout.NORTH);
-
         //creating common button panel
         JPanel allBtnPanel = new JPanel();
         allBtnPanel.setLayout(new BorderLayout());
-        panel.add(allBtnPanel, BorderLayout.CENTER);
+        //adding button panel-1
+        allBtnPanel.add(createBtnPanel1(), BorderLayout.NORTH);
+        //adding button panel-2
+        allBtnPanel.add(createBtnPanel2(), BorderLayout.CENTER);
+        //adding button panel-3
+        allBtnPanel.add(createBtnPanel3(), BorderLayout.SOUTH);
 
+        //adding IP-panel
+        panel.add(createIPPanel(), BorderLayout.NORTH);
+        //adding all buttons to parent parent
+        panel.add(allBtnPanel, BorderLayout.CENTER);
+        //add processing view field
+        panel.add(createTxtPanel(), BorderLayout.SOUTH);
+
+        pack();
+    }
+
+    private JPanel createTxtPanel() {
+        //creating scroll text panel for log viewing
+        JPanel textPanel = new JPanel();
+        textPanel.setBorder(BorderFactory.createTitledBorder("Лог обработки: "));
+        JScrollPane logScrollPane = new JScrollPane(logText);
+        logScrollPane.setPreferredSize(new Dimension(580, 400));
+        textPanel.add(logScrollPane);
+        return textPanel;
+    }
+
+    private JPanel createBtnPanel1() {
         //creating buttons panel-1
         JPanel btnPanel1 = new JPanel();
         //loading list button
@@ -90,10 +97,11 @@ public class GuiView extends JFrame implements View {
         });
         //adding pathField near loading button
         btnPanel1.add(pathField);
-
         btnPanel1.add(button11);
-        allBtnPanel.add(btnPanel1, BorderLayout.NORTH);
+        return btnPanel1;
+    }
 
+    private JPanel createBtnPanel2() {
         //creating buttons panel-2 - with region list selection
         JPanel btnPanel2 = new JPanel();
         btnPanel2.add(new JLabel("<html><b>Выберите регион для обработки: </b>"));
@@ -108,11 +116,10 @@ public class GuiView extends JFrame implements View {
             }
         });
         btnPanel2.add(regionBox);
+        return btnPanel2;
+    }
 
-        allBtnPanel.add(btnPanel2, BorderLayout.CENTER);
-
-
-
+    private JPanel createBtnPanel3() {
         //creating buttons panel-3
         JPanel btnPanel3 = new JPanel();
         btnPanel3.setLayout(new BorderLayout());
@@ -168,18 +175,33 @@ public class GuiView extends JFrame implements View {
         subBtnPanel2.add(button35);
         btnPanel3.add(subBtnPanel1, BorderLayout.NORTH);
         btnPanel3.add(subBtnPanel2, BorderLayout.SOUTH);
+        return btnPanel3;
+    }
 
-        allBtnPanel.add(btnPanel3, BorderLayout.SOUTH);
+    private void initWindow() {
+        setVisible(true);
+        setResizable(false);
+        setMinimumSize(new Dimension(600,650));
+        setTitle("Проверка доступа к УТМ на магазинах");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
 
-        //add processing view field
-        JPanel textPanel = new JPanel();
-        textPanel.setBorder(BorderFactory.createTitledBorder("Лог обработки: "));
-        JScrollPane logScrollPane = new JScrollPane(logText);
-        logScrollPane.setPreferredSize(new Dimension(580, 400));
-        textPanel.add(logScrollPane);
-        panel.add(textPanel, BorderLayout.SOUTH);
-
-        pack();
+    private JPanel createIPPanel() {
+        //output your IP
+        String IP;
+        String host = "";
+        try {
+            IP = InetAddress.getLocalHost().getHostAddress();
+            host = InetAddress.getLocalHost().getHostName();
+        }
+        catch (Exception e) {
+            IP = "Не хватает прав для получения IP-адреса";
+        }
+        JPanel IPPanel = new JPanel();
+        IPPanel.setBorder(BorderFactory.createTitledBorder("Ваш IP-адрес и имя компьютера: "));
+        IPPanel.add(new JLabel("<html><b>" + IP + ", </b>"));
+        IPPanel.add(new JLabel("<html><b>" + host + "</b>"));
+        return IPPanel;
     }
 
     private String[] addRegionList() {

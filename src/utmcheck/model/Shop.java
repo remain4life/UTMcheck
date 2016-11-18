@@ -50,4 +50,25 @@ public class Shop implements Comparable{
     public int compareTo(Object o) {
         return this.name.compareToIgnoreCase(((Shop)o).name);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Shop)) return false;
+
+        Shop shop = (Shop) o;
+
+        if (!getName().equals(shop.getName())) return false;
+        if (getRegion() != shop.getRegion()) return false;
+        return getIP().equals(shop.getIP());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getName().hashCode();
+        result = 31 * result + getRegion().hashCode();
+        result = 31 * result + getIP().hashCode();
+        return result;
+    }
 }
