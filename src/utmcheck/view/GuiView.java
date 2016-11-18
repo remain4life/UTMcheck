@@ -22,10 +22,9 @@ import java.util.Map;
 public class GuiView extends JFrame implements View {
     private Controller controller;
     //field for view processing
-    //private volatile JTextArea logText = new JTextArea(); //old field with plain text
     private volatile ColorPane logText = new ColorPane();
     //field for path
-    private volatile JTextField pathField = new JTextField("C:/shops/shopList2.txt", 30);
+    private volatile JTextField pathField = new JTextField("C:/shops/shopList.txt", 30);
 
     public GuiView() {
         try {
@@ -40,7 +39,7 @@ public class GuiView extends JFrame implements View {
     private void initGui() {
         //configure our window
         setVisible(true);
-        setMinimumSize(new Dimension(600,600));
+        setMinimumSize(new Dimension(600,650));
         setTitle("Проверка доступа к УТМ на магазинах");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -319,15 +318,15 @@ public class GuiView extends JFrame implements View {
                 break;
             case NO_UTM_CONNECT:
                 status = "Компьютер доступен, нет связи с УТМ!";
-                colorStatus = Color.ORANGE;
+                colorStatus = Color.MAGENTA;
                 break;
             case UTM_WRONG_STATUS:
                 status = "Компьютер доступен, проблема со службами УТМ!";
-                colorStatus = Color.ORANGE;
+                colorStatus = Color.MAGENTA;
                 break;
             default:
                 status = "Не обработан!";
-                colorStatus = Color.MAGENTA;
+                colorStatus = Color.ORANGE;
                 break;
         }
 

@@ -41,7 +41,7 @@ public class Model {
         String IP = ParserUtil.socketToIP(shop.getIP());
         InetAddress inet = InetAddress.getByName(IP);
         //if host reachable - we check connect with socket
-        if (inet.isReachable(2000)) {
+        if (inet.isReachable(3000)) {
             Map.Entry<Shop, Status> entry;
             try {
                 entry = checkIP(shop);

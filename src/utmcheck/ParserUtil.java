@@ -26,7 +26,6 @@ public final class ParserUtil {
         * one or more space separated words
         ** one or more space separated words, started with region name
         *** IP-address or domain name, may start with http:// or not
-        encoding - UTF-8
 
         examples:
 
