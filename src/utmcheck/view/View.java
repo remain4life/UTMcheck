@@ -9,6 +9,7 @@ import utmcheck.model.Shop;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 public interface View {
@@ -27,4 +28,6 @@ public interface View {
     void interruptDone();
 
     void cashedShopsShown();
+
+
 }

@@ -1,23 +1,20 @@
 package utmcheck.view;
 
-import utmcheck.ColorPane;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.exceptions.NotCorrectFileException;
-import utmcheck.model.ModelData;
 import utmcheck.model.Shop;
 
+import javax.mail.MessagingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.*;
 
 public class GuiView extends JFrame implements View {
     private Controller controller;
@@ -149,30 +146,54 @@ public class GuiView extends JFrame implements View {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //here controller starts new thread for real-time logging
-                controller.viewShops();
+                controller.getShops();
+            }
+        });
+        //view not connected shops button
+        JButton button34 = new JButton("Вывести проблемные магазины");
+        button34.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.getProblemShops();
             }
         });
         //clear button
-        JButton button34 = new JButton("Очистить вывод");
-        button34.addActionListener(new ActionListener() {
+        JButton button35 = new JButton("Очистить вывод");
+        button35.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearLogView();
             }
         });
         //exit button
-        JButton button35 = new JButton("Выход");
-        button35.addActionListener(new ActionListener() {
+        JButton button36 = new JButton("Выход");
+        button36.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
+
+        //send email test
+        JButton button37 = new JButton("Send (test)");
+        button37.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    controller.sendProblemShops();
+                } catch (MessagingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         subBtnPanel1.add(button31);
         subBtnPanel1.add(button32);
         subBtnPanel1.add(button33);
         subBtnPanel2.add(button34);
         subBtnPanel2.add(button35);
+        subBtnPanel2.add(button36);
+        subBtnPanel2.add(button37);
         btnPanel3.add(subBtnPanel1, BorderLayout.NORTH);
         btnPanel3.add(subBtnPanel2, BorderLayout.SOUTH);
         return btnPanel3;

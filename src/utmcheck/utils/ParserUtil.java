@@ -1,13 +1,11 @@
-package utmcheck;
+package utmcheck.utils;
 
 import utmcheck.enums.Region;
 import utmcheck.exceptions.NotCorrectFileException;
 import utmcheck.model.Shop;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
