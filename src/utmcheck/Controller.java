@@ -76,7 +76,7 @@ public class Controller {
             return;
         }
 
-        List<Shop> selectedShops = getNeededRegionShops();
+        List<Shop> selectedShops = getNeededRegionShops(model.getModelData().getShopList());
 
         if (selectedShops.isEmpty()) {
             view.emptyRegionMessage();
@@ -87,8 +87,7 @@ public class Controller {
     }
 
     //getting shop list based on main region town
-    private List<Shop> getNeededRegionShops() {
-        List<Shop> allShops = model.getModelData().getShopList();
+    private List<Shop> getNeededRegionShops(List<Shop> allShops) {
         List<Shop> shops = new ArrayList<>();
         switch (region) {
             case ALL:
@@ -105,6 +104,12 @@ public class Controller {
                             break;
                         case SEVASTOPOL:
                             if (shop.getRegion() == region) {
+                                shops.add(shop);
+                            }
+                            break;
+                        case YEVPATORIA:
+                            if (shop.getRegion() == region ||
+                                    shop.getRegion() == SAKI) {
                                 shops.add(shop);
                             }
                             break;
@@ -207,9 +212,13 @@ public class Controller {
         }
     }
 
-    public void viewShops() {
+    public void getShops() {
+        if (region == ALL) {
+            view.refreshAll(model.getModelData().getResultMap());
+            return;
+        }
         //getting shops according region
-        List<Shop> neededShops = getNeededRegionShops();
+        List<Shop> neededShops = getNeededRegionShops(model.getModelData().getShopList());
         //new map for output
         Map<Shop, Status> regionMap = new TreeMap<>();
         for (Map.Entry<Shop, Status> entry: model.getModelData().getResultMap().entrySet()) {
@@ -222,5 +231,42 @@ public class Controller {
             return;
         }
         view.refreshAll(regionMap);
+    }
+
+    public void getProblemShops() {
+        //getting ALL problem shops
+        Map<Shop,Status> allProblemShops =  model.getModelData().getNotConnectedShops();
+
+        if (region != ALL) {
+
+            //getting ALL region shops
+            List<Shop> allRegionShops = getNeededRegionShops(model.getModelData().getShopList());
+
+            //needed REGION problem shops
+            Map<Shop,Status> problemRegionShops = new TreeMap<>();
+
+            for (Map.Entry<Shop, Status> problemShopEntry : allProblemShops.entrySet()) {
+                if (allRegionShops.contains(problemShopEntry.getKey()))
+                    problemRegionShops.put(problemShopEntry.getKey(), problemShopEntry.getValue());
+
+            }
+
+            if (problemRegionShops.isEmpty()) {
+                view.emptyRegionMessage();
+                return;
+            }
+
+            view.refreshAll(problemRegionShops);
+
+        } else {
+            if (allProblemShops.isEmpty()) {
+                view.emptyRegionMessage();
+                return;
+            }
+            //getting ALL
+            view.refreshAll(allProblemShops);
+        }
+
+
     }
 }

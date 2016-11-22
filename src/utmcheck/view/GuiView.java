@@ -5,7 +5,6 @@ import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.exceptions.NotCorrectFileException;
-import utmcheck.model.ModelData;
 import utmcheck.model.Shop;
 
 import javax.swing.*;
@@ -14,10 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class GuiView extends JFrame implements View {
     private Controller controller;
@@ -142,20 +140,28 @@ public class GuiView extends JFrame implements View {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //here controller starts new thread for real-time logging
-                controller.viewShops();
+                controller.getShops();
+            }
+        });
+        //view not connected shops button
+        JButton button34 = new JButton("Вывести проблемные магазины");
+        button34.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.getProblemShops();
             }
         });
         //clear button
-        JButton button34 = new JButton("Очистить вывод");
-        button34.addActionListener(new ActionListener() {
+        JButton button35 = new JButton("Очистить вывод");
+        button35.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearLogView();
             }
         });
         //exit button
-        JButton button35 = new JButton("Выход");
-        button35.addActionListener(new ActionListener() {
+        JButton button36 = new JButton("Выход");
+        button36.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -166,6 +172,7 @@ public class GuiView extends JFrame implements View {
         subBtnPanel1.add(button33);
         subBtnPanel2.add(button34);
         subBtnPanel2.add(button35);
+        subBtnPanel2.add(button36);
         btnPanel3.add(subBtnPanel1, BorderLayout.NORTH);
         btnPanel3.add(subBtnPanel2, BorderLayout.SOUTH);
 

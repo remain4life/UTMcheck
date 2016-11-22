@@ -31,6 +31,7 @@ public class Model {
         } else {
             //if something wrong with UTM services
             modelData.getResultMap().put(shop, Status.UTM_WRONG_STATUS);
+            modelData.getNotConnectedShops().put(shop, Status.UTM_WRONG_STATUS);
             return new HashMap.SimpleEntry<>(shop, Status.UTM_WRONG_STATUS);
         }
 
@@ -48,6 +49,7 @@ public class Model {
             } catch (IOException e) {
                 //if we have exception in connection establishment time
                 modelData.getResultMap().put(shop, Status.NO_UTM_CONNECT);
+                modelData.getNotConnectedShops().put(shop, Status.NO_UTM_CONNECT);
                 return new HashMap.SimpleEntry<>(shop, Status.NO_UTM_CONNECT);
             }
             return entry;
@@ -55,7 +57,7 @@ public class Model {
             //if host isn't reachable - it doesn't make sense to check socket
         } else {
             modelData.getResultMap().put(shop, Status.NO_HOST_CONNECT);
-            modelData.getNotConnectedShops().add(shop);
+            modelData.getNotConnectedShops().put(shop, Status.NO_HOST_CONNECT);
             return new HashMap.SimpleEntry<>(shop, Status.NO_HOST_CONNECT);
         }
 
