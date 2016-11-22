@@ -4,9 +4,11 @@ import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.model.Model;
 import utmcheck.model.Shop;
+import utmcheck.utils.SendEmailUtil;
 import utmcheck.view.GuiView;
 import utmcheck.view.View;
 
+import javax.mail.MessagingException;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
@@ -233,17 +235,18 @@ public class Controller {
         view.refreshAll(regionMap);
     }
 
-    public void getProblemShops() {
+    public Map<Shop,Status> getProblemShops() {
         //getting ALL problem shops
         Map<Shop,Status> allProblemShops =  model.getModelData().getNotConnectedShops();
+        //needed REGION problem shops
+        Map<Shop,Status> problemRegionShops = new TreeMap<>();
 
         if (region != ALL) {
 
             //getting ALL region shops
             List<Shop> allRegionShops = getNeededRegionShops(model.getModelData().getShopList());
 
-            //needed REGION problem shops
-            Map<Shop,Status> problemRegionShops = new TreeMap<>();
+
 
             for (Map.Entry<Shop, Status> problemShopEntry : allProblemShops.entrySet()) {
                 if (allRegionShops.contains(problemShopEntry.getKey()))
@@ -253,7 +256,7 @@ public class Controller {
 
             if (problemRegionShops.isEmpty()) {
                 view.emptyRegionMessage();
-                return;
+                return null;
             }
 
             view.refreshAll(problemRegionShops);
@@ -261,12 +264,17 @@ public class Controller {
         } else {
             if (allProblemShops.isEmpty()) {
                 view.emptyRegionMessage();
-                return;
+                return null;
             }
             //getting ALL
             view.refreshAll(allProblemShops);
         }
 
+        return problemRegionShops;
+    }
 
+    public void sendProblemShops() throws MessagingException{
+        String textToSend = SendEmailUtil.resultMapToText(getProblemShops());
+        SendEmailUtil.sendEmail(textToSend);
     }
 }

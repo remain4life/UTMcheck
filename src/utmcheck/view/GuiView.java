@@ -1,12 +1,12 @@
 package utmcheck.view;
 
-import utmcheck.ColorPane;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.exceptions.NotCorrectFileException;
 import utmcheck.model.Shop;
 
+import javax.mail.MessagingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.List;
 
 public class GuiView extends JFrame implements View {
     private Controller controller;
@@ -167,12 +166,27 @@ public class GuiView extends JFrame implements View {
                 dispose();
             }
         });
+
+        //send email test
+        JButton button37 = new JButton("Send (test)");
+        button37.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    controller.sendProblemShops();
+                } catch (MessagingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         subBtnPanel1.add(button31);
         subBtnPanel1.add(button32);
         subBtnPanel1.add(button33);
         subBtnPanel2.add(button34);
         subBtnPanel2.add(button35);
         subBtnPanel2.add(button36);
+        subBtnPanel2.add(button37);
         btnPanel3.add(subBtnPanel1, BorderLayout.NORTH);
         btnPanel3.add(subBtnPanel2, BorderLayout.SOUTH);
 

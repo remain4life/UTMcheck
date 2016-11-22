@@ -1,4 +1,4 @@
-package utmcheck;
+package utmcheck.view;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;

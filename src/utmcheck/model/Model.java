@@ -1,6 +1,6 @@
 package utmcheck.model;
 
-import utmcheck.ParserUtil;
+import utmcheck.utils.ParserUtil;
 import utmcheck.enums.Status;
 
 import java.io.IOException;
