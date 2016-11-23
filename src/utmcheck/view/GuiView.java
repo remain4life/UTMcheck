@@ -101,7 +101,7 @@ public class GuiView extends JFrame implements View {
     private JPanel createBtnPanel2() {
         //creating buttons panel-2 - with region list selection
         JPanel btnPanel2 = new JPanel();
-        btnPanel2.add(new JLabel("<html><b>Выберите регион для обработки: </b>"));
+        btnPanel2.add(new JLabel("<html><b>Выберите регион для обработки/вывода: </b>"));
         JComboBox<String> regionBox = new JComboBox<>(addRegionList());
         //adding listener for processing region xelection
         regionBox.addActionListener(new ActionListener() {
@@ -123,6 +123,7 @@ public class GuiView extends JFrame implements View {
 
         JPanel subBtnPanel1 = new JPanel();
         JPanel subBtnPanel2 = new JPanel();
+        JPanel subBtnPanel3 = new JPanel();
         //processing button
         JButton button31 = new JButton("Запустить проверку магазинов");
         button31.addActionListener(new ActionListener() {
@@ -146,7 +147,7 @@ public class GuiView extends JFrame implements View {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //here controller starts new thread for real-time logging
-                controller.getShops();
+                controller.onCachedShops();
             }
         });
         //view not connected shops button
@@ -157,35 +158,48 @@ public class GuiView extends JFrame implements View {
                 controller.onProblemShops();
             }
         });
-        //clear button
-        JButton button35 = new JButton("Очистить вывод");
+        //send email test
+        JButton button35 = new JButton("Выслать письма о проблемных магазинах");
         button35.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    //flag for successful sending
+                    boolean goodSend = controller.sendProblemShops();
+                    if (goodSend)
+                        logText.append(new Color(0, 100, 0), "Письма успешно отправлены." + System.lineSeparator());
+                    else
+                        logText.append(Color.RED, "Нет данных для отправки!" + System.lineSeparator());
+                } catch (MessagingException | IOException e1) {
+                    logText.append(Color.RED, "Проблема при отправке!" + System.lineSeparator());
+                    e1.printStackTrace();
+                }
+            }
+        });
+        //clear button
+        JButton button36 = new JButton("Очистить вывод");
+        button36.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearLogView();
             }
         });
-        //exit button
-        JButton button36 = new JButton("Выход");
-        button36.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
 
-        //send email test
-        JButton button37 = new JButton("Send (test)");
+        //clear model data button
+        JButton button37 = new JButton("Очистить кэш обработки");
         button37.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    controller.sendProblemShops();
-                    logText.append(new Color(0, 100, 0), "Письма успешно отправлены." + System.lineSeparator());
-                } catch (MessagingException | IOException e1) {
-                    logText.append(Color.RED, "Проблема при отправке!" + System.lineSeparator());
-                    e1.printStackTrace();
-                }
+                controller.onClearModelData();
+                logText.append(new Color(0, 100, 0), "База данных очищена." + System.lineSeparator());
+            }
+        });
+        //exit button
+        JButton button38 = new JButton("Выход");
+        button38.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
             }
         });
 
@@ -194,17 +208,19 @@ public class GuiView extends JFrame implements View {
         subBtnPanel1.add(button33);
         subBtnPanel2.add(button34);
         subBtnPanel2.add(button35);
-        subBtnPanel2.add(button36);
-        subBtnPanel2.add(button37);
+        subBtnPanel3.add(button36);
+        subBtnPanel3.add(button37);
+        subBtnPanel3.add(button38);
         btnPanel3.add(subBtnPanel1, BorderLayout.NORTH);
-        btnPanel3.add(subBtnPanel2, BorderLayout.SOUTH);
+        btnPanel3.add(subBtnPanel2, BorderLayout.CENTER);
+        btnPanel3.add(subBtnPanel3, BorderLayout.SOUTH);
         return btnPanel3;
     }
 
     private void initWindow() {
         setVisible(true);
         setResizable(false);
-        setMinimumSize(new Dimension(600,650));
+        setMinimumSize(new Dimension(600,680));
         setTitle("Проверка доступа к УТМ на магазинах");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -271,6 +287,40 @@ public class GuiView extends JFrame implements View {
                 break;
             default:
                 region = Region.OTHER;
+                break;
+        }
+        return region;
+    }
+
+    private String getStringFromMainRegions(Region r) {
+        String region;
+        switch (r) {
+            case SIMFEROPOL:
+                region = " Симферополь / Белогорск / Бахчисарай ";
+                break;
+            case SEVASTOPOL:
+                region = " Севастополь ";
+                break;
+            case JANKOI:
+                region = " Джанкой / Красногвардейск / Нижнегорск ";
+                break;
+            case FEODOSIYA:
+                region = " Феодосия / Судак ";
+                break;
+            case KERCH:
+                region = " Керчь ";
+                break;
+            case YEVPATORIA:
+                region = " Евпатория / Саки ";
+                break;
+            case ALUSHTA:
+                region = " Ялта / Алушта ";
+                break;
+            case KRASNOPEREKOPSK:
+                region = " Армянск / Красноперекопск ";
+                break;
+            default:
+                region = " Неизвестный регион ";
                 break;
         }
         return region;
@@ -449,5 +499,10 @@ public class GuiView extends JFrame implements View {
     @Override
     public void cashedShopsShown() {
         logText.append(new Color(0, 100, 0), "Обработанные магазины по выбранным регионам выведены!" + System.lineSeparator());
+    }
+
+    @Override
+    public void regionProblemShopsMailSent(Region r) {
+        logText.append(new Color(0, 100, 0), "Письмо для региона "+getStringFromMainRegions(r)+" отправлено!" + System.lineSeparator());
     }
 }

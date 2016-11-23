@@ -28,6 +28,5 @@ public interface View {
     void interruptDone();
 
     void cashedShopsShown();
-
-
+    void regionProblemShopsMailSent(Region r);
 }

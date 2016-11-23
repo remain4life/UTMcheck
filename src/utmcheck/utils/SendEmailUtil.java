@@ -1,9 +1,11 @@
 package utmcheck.utils;
 
+import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.model.Shop;
 
 import javax.mail.*;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
@@ -18,14 +20,15 @@ public final class SendEmailUtil {
     private SendEmailUtil() {
     }
 
-    public static void sendEmail(String textToSend) throws MessagingException, IOException {
+    public static void sendEmail(String textToSend, Region region) throws MessagingException, IOException {
+
+        InternetAddress to = getIAfromRegion(region);
 
         //creating and loading properties
         Properties props = new Properties();
         InputStream is = SendEmailUtil.class.getResourceAsStream("email.properties");
         props.load(is);
 
-        String to = "admshop@bereg.com.ua";
         //getting information from properties
         String from = props.getProperty("mail.smtp.username");
         final String userLogin = props.getProperty("mail.smtp.username");
@@ -45,7 +48,7 @@ public final class SendEmailUtil {
 
         //message attributes
         msg.setFrom(new InternetAddress(from));
-        InternetAddress[] address = {new InternetAddress(to)};
+        InternetAddress[] address = {to};
         msg.setRecipients(Message.RecipientType.TO, address);
         msg.setSubject("Уведомление о недоступности УТМ");
         msg.setSentDate(new Date());
@@ -66,7 +69,7 @@ public final class SendEmailUtil {
 
             switch (shopEntry.getValue()) {
                 case NO_HOST_CONNECT:
-                    sb.append(" нет связи с компьютером!");
+                    sb.append("нет связи с компьютером!");
                     break;
                 case UTM_WRONG_STATUS:
                 case NO_UTM_CONNECT:
@@ -82,9 +85,32 @@ public final class SendEmailUtil {
 
     public static void main(String[] args) {
         try {
-            sendEmail("Message3, test");
+            sendEmail("Message3, test", Region.ALL);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static InternetAddress getIAfromRegion(Region region) throws AddressException {
+        switch (region) {
+            case SIMFEROPOL:
+                return new InternetAddress("1@bereg.com.ua");
+            case SEVASTOPOL:
+                return new InternetAddress("2@bereg.com.ua");
+            case YEVPATORIA:
+                return new InternetAddress("3@bereg.com.ua");
+            case JANKOI:
+                return new InternetAddress("4@bereg.com.ua");
+            case ALUSHTA:
+                return new InternetAddress("5@bereg.com.ua");
+            case KRASNOPEREKOPSK:
+                return new InternetAddress("6@bereg.com.ua");
+            case FEODOSIYA:
+                return new InternetAddress("7@bereg.com.ua");
+            case KERCH:
+                return new InternetAddress("8@bereg.com.ua");
+            default:
+                return new InternetAddress("0@bereg.com.ua");
         }
     }
 }

@@ -80,4 +80,9 @@ public class ConsoleView implements View{
     public void cashedShopsShown() {
         System.out.println("Обработанные магазины по данному региону выведены!\n");
     }
+
+    @Override
+    public void regionProblemShopsMailSent(Region r) {
+        System.out.println("Письмо для региона "+r+" отправлено!\n");
+    }
 }

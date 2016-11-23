@@ -6,8 +6,10 @@ import utmcheck.enums.Status;
 import java.io.IOException;
 import java.net.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Model {
     private ModelData modelData = new ModelData();
@@ -61,5 +63,11 @@ public class Model {
             return new HashMap.SimpleEntry<>(shop, Status.NO_HOST_CONNECT);
         }
 
+    }
+
+    public void clearModelData() {
+        modelData.setShopList(new ArrayList<Shop>());
+        modelData.setNotConnectedShops(new TreeMap<Shop, Status>());
+        modelData.setResultMap(new TreeMap<Shop, Status>());
     }
 }

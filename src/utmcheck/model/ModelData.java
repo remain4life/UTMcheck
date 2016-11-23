@@ -27,6 +27,18 @@ public class ModelData {
         return notConnectedShops;
     }
 
+    public void setShopList(List<Shop> shopList) {
+        this.shopList = shopList;
+    }
+
+    public void setNotConnectedShops(Map<Shop, Status> notConnectedShops) {
+        this.notConnectedShops = notConnectedShops;
+    }
+
+    public void setResultMap(Map<Shop, Status> resultMap) {
+        this.resultMap = resultMap;
+    }
+
     public boolean isEmpty() {
         return shopList.isEmpty();
     }

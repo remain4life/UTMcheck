@@ -3,6 +3,7 @@ package utmcheck;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
 import utmcheck.model.Model;
+import utmcheck.model.ModelData;
 import utmcheck.model.Shop;
 import utmcheck.utils.SendEmailUtil;
 import utmcheck.view.GuiView;
@@ -214,9 +215,13 @@ public class Controller {
         }
     }
 
-    public void getShops() {
+    public void onCachedShops() {
         if (region == ALL) {
-            view.refreshAll(model.getModelData().getResultMap());
+            Map<Shop, Status> allRegionMap = model.getModelData().getResultMap();
+            if (!allRegionMap.isEmpty())
+                view.refreshAll(allRegionMap);
+            else
+                view.emptyRegionMessage();
             return;
         }
         //getting shops according region
@@ -246,8 +251,6 @@ public class Controller {
             //getting ALL region shops
             List<Shop> allRegionShops = getNeededRegionShops(model.getModelData().getShopList());
 
-
-
             for (Map.Entry<Shop, Status> problemShopEntry : allProblemShops.entrySet()) {
                 if (allRegionShops.contains(problemShopEntry.getKey()))
                     problemRegionShops.put(problemShopEntry.getKey(), problemShopEntry.getValue());
@@ -262,13 +265,40 @@ public class Controller {
         return problemRegionShops;
     }
 
-    public void sendProblemShops() throws MessagingException, IOException {
+    public boolean sendProblemShops() throws MessagingException, IOException {
         Map<Shop, Status> mapToSend = getProblemShops();
+
         System.out.println(mapToSend);
         if (mapToSend!=null && !mapToSend.isEmpty()) {
-            String textToSend = SendEmailUtil.resultMapToText(mapToSend);
-            SendEmailUtil.sendEmail(textToSend);
+            if (region!=ALL) {
+                String textToSend = SendEmailUtil.resultMapToText(mapToSend);
+                SendEmailUtil.sendEmail(textToSend, region);
+                return true;
+            } else {
+                //set for checking - what regions we have in map
+                Set<Region> regions = new HashSet<>();
+                for (Map.Entry<Shop, Status> entry: mapToSend.entrySet()) {
+                    regions.add(entry.getKey().getRegion());
+                }
+
+                for (Region r: regions) {
+                    //creating new map for each region in set
+                    Map<Shop, Status> tempMapToSend = new TreeMap<>();
+                    for (Map.Entry<Shop, Status> entry: mapToSend.entrySet()) {
+                        if (entry.getKey().getRegion() == r)
+                            tempMapToSend.put(entry.getKey(), entry.getValue());
+                    }
+                    //sending map
+                    String textToSend = SendEmailUtil.resultMapToText(tempMapToSend);
+                    SendEmailUtil.sendEmail(textToSend, r);
+                    //success message
+                    view.regionProblemShopsMailSent(r);
+                }
+                return true;
+            }
+
         }
+        return false;
     }
 
     public void onProblemShops() {
@@ -279,5 +309,9 @@ public class Controller {
             view.emptyRegionMessage();
         }
 
+    }
+
+    public void onClearModelData() {
+        model.clearModelData();
     }
 }
