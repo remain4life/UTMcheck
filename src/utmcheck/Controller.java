@@ -254,27 +254,30 @@ public class Controller {
 
             }
 
-            if (problemRegionShops.isEmpty()) {
-                view.emptyRegionMessage();
-                return null;
-            }
-
-            view.refreshAll(problemRegionShops);
 
         } else {
-            if (allProblemShops.isEmpty()) {
-                view.emptyRegionMessage();
-                return null;
-            }
-            //getting ALL
-            view.refreshAll(allProblemShops);
+            return allProblemShops;
         }
 
         return problemRegionShops;
     }
 
-    public void sendProblemShops() throws MessagingException{
-        String textToSend = SendEmailUtil.resultMapToText(getProblemShops());
-        SendEmailUtil.sendEmail(textToSend);
+    public void sendProblemShops() throws MessagingException, IOException {
+        Map<Shop, Status> mapToSend = getProblemShops();
+        System.out.println(mapToSend);
+        if (mapToSend!=null && !mapToSend.isEmpty()) {
+            String textToSend = SendEmailUtil.resultMapToText(mapToSend);
+            SendEmailUtil.sendEmail(textToSend);
+        }
+    }
+
+    public void onProblemShops() {
+        Map<Shop, Status> neededProblemShops = getProblemShops();
+        if (neededProblemShops!= null && !neededProblemShops.isEmpty()) {
+            view.refreshAll(neededProblemShops);
+        } else {
+            view.emptyRegionMessage();
+        }
+
     }
 }

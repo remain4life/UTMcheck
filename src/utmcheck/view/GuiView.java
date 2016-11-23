@@ -154,7 +154,7 @@ public class GuiView extends JFrame implements View {
         button34.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.getProblemShops();
+                controller.onProblemShops();
             }
         });
         //clear button
@@ -181,7 +181,9 @@ public class GuiView extends JFrame implements View {
             public void actionPerformed(ActionEvent e) {
                 try {
                     controller.sendProblemShops();
-                } catch (MessagingException e1) {
+                    logText.append(new Color(0, 100, 0), "Письма успешно отправлены." + System.lineSeparator());
+                } catch (MessagingException | IOException e1) {
+                    logText.append(Color.RED, "Проблема при отправке!" + System.lineSeparator());
                     e1.printStackTrace();
                 }
             }
