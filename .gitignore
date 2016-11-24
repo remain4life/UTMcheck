@@ -5,8 +5,10 @@
 .idea/*
 /out/*
 
+# Configs #
+/utmcheck/utils/*.properties
+
 # Package Files #
 *.jar
 *.war
 *.ear
-*.properties
