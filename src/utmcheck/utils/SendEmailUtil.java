@@ -91,26 +91,39 @@ public final class SendEmailUtil {
         }
     }
 
-    public static InternetAddress getIAfromRegion(Region region) throws AddressException {
+    public static InternetAddress getIAfromRegion(Region region) throws AddressException, IOException {
+        //creating and loading properties with emails according region
+        Properties props = new Properties();
+        InputStream is = SendEmailUtil.class.getResourceAsStream("mail_list.properties");
+        props.load(is);
+
         switch (region) {
+            case BELOGORSK:
+            case BAKHCHISARAI:
             case SIMFEROPOL:
-                return new InternetAddress("1@bereg.com.ua");
+                return new InternetAddress(props.getProperty("SIMFEROPOL"));
             case SEVASTOPOL:
-                return new InternetAddress("2@bereg.com.ua");
+                return new InternetAddress(props.getProperty("SEVASTOPOL"));
+            case SAKI:
             case YEVPATORIA:
-                return new InternetAddress("3@bereg.com.ua");
+                return new InternetAddress(props.getProperty("YEVPATORIA"));
+            case KRASNOGVARDEYSK:
+            case NIZHNEGORSK:
             case JANKOI:
-                return new InternetAddress("4@bereg.com.ua");
+                return new InternetAddress(props.getProperty("JANKOI"));
+            case YALTA:
             case ALUSHTA:
-                return new InternetAddress("5@bereg.com.ua");
+                return new InternetAddress(props.getProperty("ALUSHTA"));
+            case ARMYANSK:
             case KRASNOPEREKOPSK:
-                return new InternetAddress("6@bereg.com.ua");
+                return new InternetAddress(props.getProperty("KRASNOPEREKOPSK"));
+            case SUDAK:
             case FEODOSIYA:
-                return new InternetAddress("7@bereg.com.ua");
+                return new InternetAddress(props.getProperty("FEODOSIYA"));
             case KERCH:
-                return new InternetAddress("8@bereg.com.ua");
+                return new InternetAddress(props.getProperty("KERCH"));
             default:
-                return new InternetAddress("0@bereg.com.ua");
+                return new InternetAddress(props.getProperty("OTHER"));
         }
     }
 }

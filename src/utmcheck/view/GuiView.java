@@ -170,7 +170,7 @@ public class GuiView extends JFrame implements View {
                         logText.append(new Color(0, 100, 0), "Письма успешно отправлены." + System.lineSeparator());
                     else
                         logText.append(Color.RED, "Нет данных для отправки!" + System.lineSeparator());
-                } catch (MessagingException | IOException e1) {
+                } catch (MessagingException | IOException | CloneNotSupportedException e1) {
                     logText.append(Color.RED, "Проблема при отправке!" + System.lineSeparator());
                     e1.printStackTrace();
                 }

@@ -4,7 +4,7 @@ import utmcheck.enums.Region;
 
 import java.net.URL;
 
-public class Shop implements Comparable{
+public class Shop implements Comparable,Cloneable{
     private String name;
     private Region region;
     private URL IP;
@@ -70,5 +70,14 @@ public class Shop implements Comparable{
         result = 31 * result + getRegion().hashCode();
         result = 31 * result + getIP().hashCode();
         return result;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        super.clone();
+        String name = this.getName();
+        Region region = this.getRegion();
+        URL IP = this.getIP();
+        return new Shop(name, region, IP);
     }
 }

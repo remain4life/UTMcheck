@@ -265,21 +265,26 @@ public class Controller {
         return problemRegionShops;
     }
 
-    public boolean sendProblemShops() throws MessagingException, IOException {
-        Map<Shop, Status> mapToSend = getProblemShops();
+    public boolean sendProblemShops() throws MessagingException, IOException, CloneNotSupportedException {
+        //creating copy of problem shops map - we don't need to change regions in cached map
+        Map<Shop, Status> mapToSend = cloneShopMap(getProblemShops());
 
-        System.out.println(mapToSend);
-        if (mapToSend!=null && !mapToSend.isEmpty()) {
+        if (!mapToSend.isEmpty()) {
+            //if user selected specific region
             if (region!=ALL) {
                 String textToSend = SendEmailUtil.resultMapToText(mapToSend);
                 SendEmailUtil.sendEmail(textToSend, region);
                 return true;
             } else {
+                //changing region to main
+                changeRegionToMain(mapToSend);
+
                 //set for checking - what regions we have in map
                 Set<Region> regions = new HashSet<>();
                 for (Map.Entry<Shop, Status> entry: mapToSend.entrySet()) {
                     regions.add(entry.getKey().getRegion());
                 }
+
 
                 for (Region r: regions) {
                     //creating new map for each region in set
@@ -299,6 +304,47 @@ public class Controller {
 
         }
         return false;
+    }
+
+    private Map<Shop,Status> cloneShopMap(Map<Shop, Status> mapToClone) throws CloneNotSupportedException {
+        Map<Shop,Status> clonedMap = new TreeMap<>();
+        for (Map.Entry<Shop, Status> entry : mapToClone.entrySet()) {
+            //our Shop class overrides default Object method
+            Shop clonedShop = (Shop)entry.getKey().clone();
+            Status status = entry.getValue();
+
+            clonedMap.put(clonedShop, status);
+        }
+        return clonedMap;
+    }
+
+    private void changeRegionToMain(Map<Shop, Status> mapToSend) {
+        for (Map.Entry<Shop, Status> entry : mapToSend.entrySet()) {
+            Shop shop = entry.getKey();
+            Region shopRegion = shop.getRegion();
+            switch (shopRegion) {
+                case BELOGORSK:
+                case BAKHCHISARAI:
+                    shop.setRegion(SIMFEROPOL);
+                    break;
+                case SAKI:
+                    shop.setRegion(YEVPATORIA);
+                    break;
+                case KRASNOGVARDEYSK:
+                case NIZHNEGORSK:
+                    shop.setRegion(JANKOI);
+                    break;
+                case YALTA:
+                    shop.setRegion(SIMFEROPOL);
+                    break;
+                case ARMYANSK:
+                    shop.setRegion(KRASNOPEREKOPSK);
+                    break;
+                case SUDAK:
+                    shop.setRegion(SUDAK);
+                    break;
+            }
+        }
     }
 
     public void onProblemShops() {
