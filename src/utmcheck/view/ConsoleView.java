@@ -85,4 +85,9 @@ public class ConsoleView implements View{
     public void regionProblemShopsMailSent(Region r) {
         System.out.println("Письмо для региона "+r+" отправлено!\n");
     }
+
+    @Override
+    public void showAbout() {
+        System.out.println("Спроектировано и реализовано Александром Марченко");
+    }
 }

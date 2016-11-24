@@ -52,14 +52,31 @@ public class GuiView extends JFrame implements View {
         //adding button panel-3
         allBtnPanel.add(createBtnPanel3(), BorderLayout.SOUTH);
 
+        //creating menu and IP parent panel
+        JPanel menuAndIpPanel = new JPanel();
+        menuAndIpPanel.setLayout(new BorderLayout());
+        //adding menu
+        menuAndIpPanel.add(createMenuPanel(), BorderLayout.NORTH);
         //adding IP-panel
-        panel.add(createIPPanel(), BorderLayout.NORTH);
+        menuAndIpPanel.add(createIPPanel(), BorderLayout.SOUTH);
+
+        //adding menu/IP-panel
+        panel.add(menuAndIpPanel, BorderLayout.NORTH);
         //adding all buttons to parent parent
         panel.add(allBtnPanel, BorderLayout.CENTER);
         //add processing view field
         panel.add(createTxtPanel(), BorderLayout.SOUTH);
 
         pack();
+    }
+
+    private JMenuBar createMenuPanel() {
+        //initializing our menu bar with File and Help options
+        JMenuBar mainMenu = new JMenuBar();
+        mainMenu.setBorderPainted(true);
+        MenuHelper.initFileMenu(this, mainMenu);
+        MenuHelper.initHelpMenu(this, mainMenu);
+        return mainMenu;
     }
 
     private JPanel createTxtPanel() {
@@ -220,7 +237,7 @@ public class GuiView extends JFrame implements View {
     private void initWindow() {
         setVisible(true);
         setResizable(false);
-        setMinimumSize(new Dimension(600,680));
+        setMinimumSize(new Dimension(600,710));
         setTitle("Проверка доступа к УТМ на магазинах");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -504,5 +521,13 @@ public class GuiView extends JFrame implements View {
     @Override
     public void regionProblemShopsMailSent(Region r) {
         logText.append(new Color(0, 100, 0), "Письмо для региона "+getStringFromMainRegions(r)+" отправлено!" + System.lineSeparator());
+    }
+
+    public void showAbout() {
+        JOptionPane.showMessageDialog(this,"<html><b>Проверка доступа к УТМ на магазинах</b>"+System.lineSeparator()+
+                "<html><i>версия 1.0</i>" + System.lineSeparator()+
+                "Автор идеи и разработчик - Александр Марченко"+ System.lineSeparator()+
+                "<html><i>email: </i>"+"<html><u>remain4life@gmail.com</i>",
+                "Информация о программе",JOptionPane.INFORMATION_MESSAGE);
     }
 }
