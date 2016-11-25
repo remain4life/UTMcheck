@@ -3,10 +3,10 @@ package utmcheck.view;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
-import utmcheck.exceptions.NotCorrectFileException;
+import utmcheck.listeners.LoadShopsListener;
+import utmcheck.listeners.SendLettersListener;
 import utmcheck.model.Shop;
 
-import javax.mail.MessagingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,6 +24,17 @@ public class GuiView extends JFrame implements View {
     //field for path
     private volatile JTextField pathField = new JTextField("C:/shops/shopList.txt", 30);
 
+    @Override
+    public Controller getController() {
+        return controller;
+    }
+
+    @Override
+    public ColorPane getLogText() {
+        return logText;
+    }
+
+    @Override
     public void setPathToLoad(String s) {
         pathField.setText(s);
     }
@@ -90,8 +101,9 @@ public class GuiView extends JFrame implements View {
         //initializing our menu bar with File and Help options
         JMenuBar mainMenu = new JMenuBar();
         mainMenu.setBorderPainted(true);
-        MenuHelper.initFileMenu(this, mainMenu);
-        MenuHelper.initHelpMenu(this, mainMenu);
+        MenuHelper menuHelper = new MenuHelper(this);
+        menuHelper.initFileMenu(mainMenu);
+        menuHelper.initHelpMenu(mainMenu);
         return mainMenu;
     }
 
@@ -110,21 +122,7 @@ public class GuiView extends JFrame implements View {
         JPanel btnPanel1 = new JPanel();
         //loading list button
         JButton button11 = new JButton("Загрузить список магазинов");
-        button11.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //here we parsing file to list we'll work with
-                try {
-                    loadModelData(pathField.getText());
-                    //DarkGreen
-                    logText.append(new Color(0, 100, 0), "Данные загружены успешно, можно обрабатывать." + System.lineSeparator());
-                } catch (NotCorrectFileException e1) {
-                    logText.append(Color.RED, "Некорректный синтаксис в файле! Строка: " + e1.getMessage() + System.lineSeparator());
-                } catch (Exception e2) {
-                    logText.append(Color.RED, "Ошибка при загрузке файла!" + System.lineSeparator());
-                }
-            }
-        });
+        button11.addActionListener(new LoadShopsListener(this));
         //adding pathField near loading button
         btnPanel1.add(pathField);
         btnPanel1.add(button11);
@@ -193,22 +191,7 @@ public class GuiView extends JFrame implements View {
         });
         //send email test
         JButton button35 = new JButton("Выслать письма о проблемных магазинах");
-        button35.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    //flag for successful sending
-                    boolean goodSend = controller.sendProblemShops();
-                    if (goodSend)
-                        logText.append(new Color(0, 100, 0), "Письма успешно отправлены." + System.lineSeparator());
-                    else
-                        logText.append(Color.RED, "Нет данных для отправки!" + System.lineSeparator());
-                } catch (MessagingException | IOException | CloneNotSupportedException e1) {
-                    logText.append(Color.RED, "Проблема при отправке!" + System.lineSeparator());
-                    e1.printStackTrace();
-                }
-            }
-        });
+        button35.addActionListener(new SendLettersListener(this));
         //clear button
         JButton button36 = new JButton("Очистить вывод");
         button36.addActionListener(new ActionListener() {

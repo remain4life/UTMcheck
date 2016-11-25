@@ -23,9 +23,7 @@ public class ConsoleView implements View{
     }
 
     @Override
-    public void saveViewLog(File currentFile) {
-
-    }
+    public void saveViewLog(File currentFile) {}
 
     @Override
     public String getFolderToLoad() {
@@ -34,7 +32,16 @@ public class ConsoleView implements View{
 
     @Override
     public void saveAllCache(File currentFile) {
+    }
 
+    @Override
+    public Controller getController() {
+        return null;
+    }
+
+    @Override
+    public ColorPane getLogText() {
+        return null;
     }
 
     @Override

@@ -11,7 +11,9 @@ import java.util.Map;
 public interface View {
     void refresh(Map.Entry<Shop, Status> entry);
     void refreshAll(Map<Shop, Status> resultMap);
+    Controller getController();
     void setController(Controller controller);
+    ColorPane getLogText();
 
     void loadModelData(String stringPath) throws Exception;
     void viewIPs();
