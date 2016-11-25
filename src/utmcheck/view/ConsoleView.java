@@ -3,16 +3,44 @@ package utmcheck.view;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
-import utmcheck.model.ModelData;
 import utmcheck.model.Shop;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Map;
 
 public class ConsoleView implements View{
     private Controller controller;
+
+    //mocks
+    @Override
+    public void setPathToLoad(String s) {}
+
+    @Override
+    public String getPathToLoad() {
+        return "";
+    }
+
+    @Override
+    public void saveViewLog(File currentFile) {
+
+    }
+
+    @Override
+    public String getFolderToLoad() {
+        return null;
+    }
+
+    @Override
+    public void saveAllCache(File currentFile) {
+
+    }
+
+    @Override
+    public void regionCachedDataSaved(Region r) {
+        System.out.println("Файл для региона "+r+" сохранён!\n");
+    }
 
     @Override
     public void refreshAll(Map<Shop, Status> resultMap) {

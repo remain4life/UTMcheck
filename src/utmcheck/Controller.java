@@ -11,6 +11,8 @@ import utmcheck.view.View;
 
 import javax.mail.MessagingException;
 import javax.swing.*;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -359,5 +361,51 @@ public class Controller {
 
     public void onClearModelData() {
         model.clearModelData();
+    }
+
+    public void onSaveViewLog(File currentFile, String text) throws IOException {
+        //saving always in txt file
+        if (!currentFile.getName().endsWith(".txt"))
+            currentFile = new File(currentFile.getAbsolutePath()+".txt");
+        try (FileWriter writer = new FileWriter(currentFile)){
+            writer.write(text);
+        }
+    }
+
+    public boolean onSaveAllCache(File currentFile) throws IOException, CloneNotSupportedException {
+        Map<Shop, Status> allRegionMap = model.getModelData().getResultMap();
+        if (allRegionMap.isEmpty()) {
+            view.emptyBaseMessage();
+            return false;
+        }
+
+        //getting set of all main regions
+        Map<Shop, Status> mainRegionMap = cloneShopMap(allRegionMap);
+        changeRegionToMain(mainRegionMap);
+
+        Set<Region> mainRegions = new HashSet<>();
+        for (Map.Entry<Shop, Status> entry: mainRegionMap.entrySet()) {
+            mainRegions.add(entry.getKey().getRegion());
+        }
+
+        for (Region r: mainRegions) {
+            //creating new map for each region in set
+            Map<Shop, Status> tempMapToSave = new TreeMap<>();
+            for (Map.Entry<Shop, Status> entry: mainRegionMap.entrySet()) {
+                if (entry.getKey().getRegion() == r)
+                    tempMapToSave.put(entry.getKey(), entry.getValue());
+            }
+            //saving map for each region to file with region name
+            String textToSave = SendEmailUtil.resultMapToText(tempMapToSave);
+
+            File regionFile = new File(currentFile.getAbsolutePath()+File.separator + r + ".txt");
+            try (FileWriter writer = new FileWriter(regionFile)){
+                writer.write(textToSave);
+            }
+
+            //success message
+            view.regionCachedDataSaved(r);
+        }
+        return true;
     }
 }

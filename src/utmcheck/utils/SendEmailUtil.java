@@ -71,9 +71,11 @@ public final class SendEmailUtil {
                     break;
                 case UTM_WRONG_STATUS:
                 case NO_UTM_CONNECT:
-                    sb.append(" связь с компьюетром есть, нет связи с УТМ!");
+                    sb.append(" связь с компьютером есть, нет связи с УТМ!");
                     break;
-
+                default:
+                    sb.append(" всё ОК!");
+                    break;
             }
             sb.append(System.lineSeparator());
         }

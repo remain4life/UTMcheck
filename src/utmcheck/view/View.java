@@ -3,13 +3,9 @@ package utmcheck.view;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
-import utmcheck.model.ModelData;
 import utmcheck.model.Shop;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.List;
+import java.io.File;
 import java.util.Map;
 
 public interface View {
@@ -20,6 +16,8 @@ public interface View {
     void loadModelData(String stringPath) throws Exception;
     void viewIPs();
     void workInterrupt();
+    String getPathToLoad();
+    void setPathToLoad(String s);
 
     void doneMessage();
     void emptyBaseMessage();
@@ -30,4 +28,12 @@ public interface View {
     void cashedShopsShown();
     void regionProblemShopsMailSent(Region r);
     void showAbout();
+
+    void saveViewLog(File currentFile);
+
+    String getFolderToLoad();
+
+    void saveAllCache(File currentFile);
+
+    void regionCachedDataSaved(Region r);
 }

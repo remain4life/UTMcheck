@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Paths;
@@ -22,6 +23,21 @@ public class GuiView extends JFrame implements View {
     private volatile ColorPane logText = new ColorPane();
     //field for path
     private volatile JTextField pathField = new JTextField("C:/shops/shopList.txt", 30);
+
+    public void setPathToLoad(String s) {
+        pathField.setText(s);
+    }
+
+    @Override
+    public String getPathToLoad() {
+        return pathField.getText();
+    }
+
+    @Override
+    public String getFolderToLoad() {
+        File file = new File(pathField.getText());
+        return file.getParent();
+    }
 
     public GuiView() {
         try {
@@ -237,6 +253,8 @@ public class GuiView extends JFrame implements View {
     private void initWindow() {
         setVisible(true);
         setResizable(false);
+        //center positioning - setLocationRelativeTo(null);
+        setLocation(150,100);
         setMinimumSize(new Dimension(600,710));
         setTitle("Проверка доступа к УТМ на магазинах");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -529,5 +547,35 @@ public class GuiView extends JFrame implements View {
                 "Автор идеи и разработчик - Александр Марченко"+ System.lineSeparator()+
                 "<html><i>email: </i>"+"<html><u>remain4life@gmail.com</i>",
                 "Информация о программе",JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void saveViewLog(File currentFile) {
+        try {
+            controller.onSaveViewLog(currentFile, logText.getText());
+            String fileName = currentFile.getName();
+            if (!fileName.endsWith(".txt"))
+                fileName+=".txt";
+            logText.append(new Color(0, 100, 0), "Выведенный лог сохранён в файл "+ fileName + System.lineSeparator());
+        } catch (IOException e) {
+            logText.append(Color.RED, "Ошибка записи в файл!" + System.lineSeparator());
+        }
+    }
+
+    @Override
+    public void saveAllCache(File currentFile) {
+        try {
+            if (controller.onSaveAllCache(currentFile))
+                logText.append(new Color(0, 100, 0), "Обработанные данные успешно сохранены." + System.lineSeparator());
+        } catch (IOException | CloneNotSupportedException e) {
+            logText.append(Color.RED, "Ошибка записи в директорию!" + System.lineSeparator());
+        }
+    }
+
+    @Override
+    public void regionCachedDataSaved(Region r) {
+        logText.append(new Color(0, 100, 0), "Данные для региона "+getStringFromMainRegions(r)+
+                " сохранены в файл " + r + ".txt."+ System.lineSeparator());
+
     }
 }

@@ -1,14 +1,13 @@
-*.class
-*.xml
-
 # Folders #
-.idea/*
-/out/*
+.idea/
+out/
 
 # Configs #
-/utmcheck/utils/*.properties
+src/utmcheck/utils/email.properties
+src/utmcheck/utils/mail_list.properties
 
 # Package Files #
-*.jar
 *.war
 *.ear
+
+
