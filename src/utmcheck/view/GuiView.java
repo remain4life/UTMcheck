@@ -3,9 +3,12 @@ package utmcheck.view;
 import utmcheck.Controller;
 import utmcheck.enums.Region;
 import utmcheck.enums.Status;
+import utmcheck.listeners.ComboBoxListener;
 import utmcheck.listeners.LoadShopsListener;
+import utmcheck.listeners.OtherButtonsListener;
 import utmcheck.listeners.SendLettersListener;
 import utmcheck.model.Shop;
+import utmcheck.utils.RegionStringUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,9 +75,9 @@ public class GuiView extends JFrame implements View {
         //creating common button panel
         JPanel allBtnPanel = new JPanel();
         allBtnPanel.setLayout(new BorderLayout());
-        //adding button panel-1
+        //adding button panel-1 - loading shops list
         allBtnPanel.add(createBtnPanel1(), BorderLayout.NORTH);
-        //adding button panel-2
+        //adding button panel-2 - with region list selection
         allBtnPanel.add(createBtnPanel2(), BorderLayout.CENTER);
         //adding button panel-3
         allBtnPanel.add(createBtnPanel3(), BorderLayout.SOUTH);
@@ -118,7 +121,7 @@ public class GuiView extends JFrame implements View {
     }
 
     private JPanel createBtnPanel1() {
-        //creating buttons panel-1
+        //creating buttons panel-1 - loading shops list
         JPanel btnPanel1 = new JPanel();
         //loading list button
         JButton button11 = new JButton("Загрузить список магазинов");
@@ -133,16 +136,9 @@ public class GuiView extends JFrame implements View {
         //creating buttons panel-2 - with region list selection
         JPanel btnPanel2 = new JPanel();
         btnPanel2.add(new JLabel("<html><b>Выберите регион для обработки/вывода: </b>"));
-        JComboBox<String> regionBox = new JComboBox<>(addRegionList());
+        JComboBox<String> regionBox = new JComboBox<>(RegionStringUtil.addRegionList());
         //adding listener for processing region xelection
-        regionBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JComboBox comboBox = (JComboBox) e.getSource();
-                String selectedItem = (String) (comboBox).getSelectedItem();
-                controller.setRegion(getMainRegionsFromString(selectedItem));
-            }
-        });
+        regionBox.addActionListener(new ComboBoxListener(this));
         btnPanel2.add(regionBox);
         return btnPanel2;
     }
@@ -155,69 +151,33 @@ public class GuiView extends JFrame implements View {
         JPanel subBtnPanel1 = new JPanel();
         JPanel subBtnPanel2 = new JPanel();
         JPanel subBtnPanel3 = new JPanel();
+        //listener for almost all panel buttons
+        ActionListener buttonsListener = new OtherButtonsListener(this);
         //processing button
         JButton button31 = new JButton("Запустить проверку магазинов");
-        button31.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //here controller starts new thread for real-time logging
-                viewIPs();
-            }
-        });
+        button31.addActionListener(buttonsListener);
         //interrupt button
         JButton button32 = new JButton("Прервать выполнение");
-        button32.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                workInterrupt();
-            }
-        });
+        button32.addActionListener(buttonsListener);
         //resultMap with cached data show button
         JButton button33 = new JButton("Вывести обработанные магазины");
-        button33.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //here controller starts new thread for real-time logging
-                controller.onCachedShops();
-            }
-        });
+        button33.addActionListener(buttonsListener);
         //view not connected shops button
         JButton button34 = new JButton("Вывести проблемные магазины");
-        button34.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.onProblemShops();
-            }
-        });
+        button34.addActionListener(buttonsListener);
         //send email test
         JButton button35 = new JButton("Выслать письма о проблемных магазинах");
         button35.addActionListener(new SendLettersListener(this));
         //clear button
         JButton button36 = new JButton("Очистить вывод");
-        button36.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearLogView();
-            }
-        });
+        button36.addActionListener(buttonsListener);
 
         //clear model data button
         JButton button37 = new JButton("Очистить кэш обработки");
-        button37.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.onClearModelData();
-                logText.append(new Color(0, 100, 0), "База данных очищена." + System.lineSeparator());
-            }
-        });
+        button37.addActionListener(buttonsListener);
         //exit button
         JButton button38 = new JButton("Выход");
-        button38.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        button38.addActionListener(buttonsListener);
 
         subBtnPanel1.add(button31);
         subBtnPanel1.add(button32);
@@ -261,89 +221,6 @@ public class GuiView extends JFrame implements View {
         return IPPanel;
     }
 
-    private String[] addRegionList() {
-        return new String[]{" Все ",
-                " Симферополь / Белогорск / Бахчисарай ",
-                " Севастополь ",
-                " Джанкой / Красногвардейск / Нижнегорск ",
-                " Феодосия / Судак ",
-                " Керчь ",
-                " Евпатория / Саки ",
-                " Ялта / Алушта ",
-                " Армянск / Красноперекопск "};
-    }
-
-    private Region getMainRegionsFromString(String item) {
-        Region region;
-        switch (item) {
-            case " Все ":
-                region = Region.ALL;
-                break;
-            case " Симферополь / Белогорск / Бахчисарай ":
-                region = Region.SIMFEROPOL;
-                break;
-            case " Севастополь ":
-                region = Region.SEVASTOPOL;
-                break;
-            case " Джанкой / Красногвардейск / Нижнегорск ":
-                region = Region.JANKOI;
-                break;
-            case " Феодосия / Судак ":
-                region = Region.FEODOSIYA;
-                break;
-            case " Керчь ":
-                region = Region.KERCH;
-                break;
-            case " Евпатория / Саки ":
-                region = Region.YEVPATORIA;
-                break;
-            case " Ялта / Алушта ":
-                region = Region.ALUSHTA;
-                break;
-            case " Армянск / Красноперекопск ":
-                region = Region.KRASNOPEREKOPSK;
-                break;
-            default:
-                region = Region.OTHER;
-                break;
-        }
-        return region;
-    }
-
-    private String getStringFromMainRegions(Region r) {
-        String region;
-        switch (r) {
-            case SIMFEROPOL:
-                region = " Симферополь / Белогорск / Бахчисарай ";
-                break;
-            case SEVASTOPOL:
-                region = " Севастополь ";
-                break;
-            case JANKOI:
-                region = " Джанкой / Красногвардейск / Нижнегорск ";
-                break;
-            case FEODOSIYA:
-                region = " Феодосия / Судак ";
-                break;
-            case KERCH:
-                region = " Керчь ";
-                break;
-            case YEVPATORIA:
-                region = " Евпатория / Саки ";
-                break;
-            case ALUSHTA:
-                region = " Ялта / Алушта ";
-                break;
-            case KRASNOPEREKOPSK:
-                region = " Армянск / Красноперекопск ";
-                break;
-            default:
-                region = " Неизвестный регион ";
-                break;
-        }
-        return region;
-    }
-
     @Override
     public void refreshAll(Map<Shop, Status> resultMap) {
         for (Map.Entry<Shop, Status> result: resultMap.entrySet()) {
@@ -360,88 +237,11 @@ public class GuiView extends JFrame implements View {
 
     @Override
     public void refresh(Map.Entry<Shop, Status> entry) {
-        final String regionOutput;
-        final String status;
-        final Color colorStatus;
-
         Shop shop = entry.getKey();
-        switch (shop.getRegion()) {
-            case SIMFEROPOL:
-                regionOutput = ", Симферополь, ";
-                break;
-            case BAKHCHISARAI:
-                regionOutput = ", Бахчисарай, ";
-                break;
-            case BELOGORSK:
-                regionOutput = ", Белогорск, ";
-                break;
-            case SEVASTOPOL:
-                regionOutput = ", Севастополь, ";
-                break;
-            case YALTA:
-                regionOutput = ", Ялта, ";
-                break;
-            case ALUSHTA:
-                regionOutput = ", Алушта, ";
-                break;
-            case ARMYANSK:
-                regionOutput = ", Армянск, ";
-                break;
-            case KRASNOPEREKOPSK:
-                regionOutput = ", Красноперекопск, ";
-                break;
-            case KRASNOGVARDEYSK:
-                regionOutput = ", Красногвардейск, ";
-                break;
-            case NIZHNEGORSK:
-                regionOutput = ", Нижнегорск, ";
-                break;
-            case KERCH:
-                regionOutput = ", Керчь, ";
-                break;
-            case FEODOSIYA:
-                regionOutput = ", Феодосия, ";
-                break;
-            case SUDAK:
-                regionOutput = ", Судак, ";
-                break;
-            case YEVPATORIA:
-                regionOutput = ", Евпатория, ";
-                break;
-            case SAKI:
-                regionOutput = ", Саки, ";
-                break;
-            case JANKOI:
-                regionOutput = ", Джанкой, ";
-                break;
-            default:
-                regionOutput = ", Неизвестный регион, ";
-                break;
-        }
-
-
-        switch (entry.getValue()) {
-            case OK:
-                status = "Всё ОК!";
-                colorStatus = new Color(46, 139, 87);
-                break;
-            case NO_HOST_CONNECT:
-                status = "Нет связи с компьютером!";
-                colorStatus = Color.RED;
-                break;
-            case NO_UTM_CONNECT:
-                status = "Компьютер доступен, нет связи с УТМ!";
-                colorStatus = Color.MAGENTA;
-                break;
-            case UTM_WRONG_STATUS:
-                status = "Компьютер доступен, проблема со службами УТМ!";
-                colorStatus = Color.MAGENTA;
-                break;
-            default:
-                status = "Не обработан!";
-                colorStatus = Color.ORANGE;
-                break;
-        }
+        Status status = entry.getValue();
+        final String regionOutput = RegionStringUtil.getStringFromEnum(shop.getRegion());
+        final String statusOutput = RegionStringUtil.getStringFromEnum(status);
+        final Color colorStatus = RegionStringUtil.getColorToStatus(status);
 
         final String name = shop.getName();
         final String IP = shop.getIP().toString();
@@ -453,7 +253,7 @@ public class GuiView extends JFrame implements View {
                 logText.append(regionOutput);
                 logText.append(Color.BLUE, IP);
                 logText.append(" ==> ");
-                logText.append(colorStatus, status + System.lineSeparator(), false);
+                logText.append(colorStatus, statusOutput + System.lineSeparator(), false);
             }
         });
 
@@ -490,6 +290,7 @@ public class GuiView extends JFrame implements View {
         controller.workInterrupt();
     }
 
+    @Override
     public void clearLogView() {
         logText.setText("");
     }
@@ -521,7 +322,8 @@ public class GuiView extends JFrame implements View {
 
     @Override
     public void regionProblemShopsMailSent(Region r) {
-        logText.append(new Color(0, 100, 0), "Письмо для региона "+getStringFromMainRegions(r)+" отправлено!" + System.lineSeparator());
+        String regionName = RegionStringUtil.getStringFromMainRegions(r);
+        logText.append(new Color(0, 100, 0), "Письмо для региона "+regionName+" отправлено!" + System.lineSeparator());
     }
 
     public void showAbout() {
@@ -557,7 +359,8 @@ public class GuiView extends JFrame implements View {
 
     @Override
     public void regionCachedDataSaved(Region r) {
-        logText.append(new Color(0, 100, 0), "Данные для региона "+getStringFromMainRegions(r)+
+        String regionName = RegionStringUtil.getStringFromMainRegions(r);
+        logText.append(new Color(0, 100, 0), "Данные для региона "+regionName+
                 " сохранены в файл " + r + ".txt."+ System.lineSeparator());
 
     }

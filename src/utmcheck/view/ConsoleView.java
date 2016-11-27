@@ -45,6 +45,11 @@ public class ConsoleView implements View{
     }
 
     @Override
+    public void clearLogView() {
+
+    }
+
+    @Override
     public void regionCachedDataSaved(Region r) {
         System.out.println("Файл для региона "+r+" сохранён!\n");
     }

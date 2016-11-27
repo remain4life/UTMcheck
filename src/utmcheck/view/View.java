@@ -17,6 +17,7 @@ public interface View {
 
     void loadModelData(String stringPath) throws Exception;
     void viewIPs();
+    void clearLogView();
     void workInterrupt();
     String getPathToLoad();
     void setPathToLoad(String s);
